@@ -1,0 +1,18 @@
+# macOS
+.DS_Store
+
+# Obsidian local/cache state (machine-specific)
+.obsidian/workspace.json
+.obsidian/workspaces.json
+.obsidian/cache/
+.obsidian/.trash/
+.obsidian/plugins/*/data.json
+
+# Logs
+*.log
+
+# Local Python virtual environment
+.venv/
+
+# Local Node.js dependencies
+node_modules/

@@ -1,0 +1,12 @@
+{
+  "name": "notebook-tools",
+  "private": true,
+  "devDependencies": {
+    "defuddle": "^0.17.0",
+    "puppeteer-core": "^24.41.0"
+  },
+  "scripts": {
+    "fetch:md": "defuddle parse",
+    "fetch:pdf": "node scripts/web_to_pdf.mjs"
+  }
+}
