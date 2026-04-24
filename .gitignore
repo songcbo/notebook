@@ -11,6 +11,11 @@
 # Logs
 *.log
 
+# Quartz build output/cache
+public/
+.quartz-cache/
+tsconfig.tsbuildinfo
+
 # Local Python virtual environment
 .venv/
 

@@ -6,7 +6,7 @@ tags:
   - multi-agent
   - architecture
 source_links:
-  - [[raw/sources/agent/2026-04-17-when-to-use-multi-agent-systems.pdf]]
+  - raw/sources/agent/2026-04-17-when-to-use-multi-agent-systems.pdf
 updated_at: 2026-04-18
 ---
 

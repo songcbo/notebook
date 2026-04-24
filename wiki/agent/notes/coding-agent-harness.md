@@ -6,7 +6,7 @@ tags:
   - coding-agent
   - harness
 source_links:
-  - [[raw/sources/agent/2026-04-17-components-of-a-coding-agent.pdf]]
+  - raw/sources/agent/2026-04-17-components-of-a-coding-agent.pdf
 updated_at: 2026-04-18
 ---
 
@@ -88,4 +88,4 @@ coding harness 是包在模型外部的一层运行时与控制层，用来管�
 
 ## 关联
 
-- [[wiki/agent/notes/multi-agent-decision-framework]]
+- [[agent/notes/multi-agent-decision-framework]]
