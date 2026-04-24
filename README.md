@@ -159,6 +159,8 @@ updated_at: 2026-04-17
 
 当前仓库使用 Quartz 将 `wiki/` 构建为静态知识库网站。
 
+站点工程文件集中放在 `site/` 下，根目录只保留 npm 命令入口和知识库目录。
+
 本地预览：
 
 ```bash
@@ -168,12 +170,14 @@ npm run site:serve
 本地构建：
 
 ```bash
-npm run site:build
+npm run build
 ```
+
+`npm run site:build` 作为兼容别名保留，实际和 `npm run build` 做同一件事。
 
 发布边界：
 - 只把 `wiki/` 作为网站内容源。
 - 不发布 `raw/`、`log/`、`.obsidian/`。
 - `raw/sources/` 中的 PDF 默认仅作为本地来源归档，不进入网站。
 
-GitHub Pages 部署配置位于 `.github/workflows/deploy-pages.yml`。仓库推送到 `main` 后会自动构建 `public/` 并发布。
+GitHub Pages 部署配置位于 `.github/workflows/deploy-pages.yml`。仓库推送到 `main` 后，GitHub Actions 会通过 `actions/setup-node` 在 runner 上安装 Node.js 22，再执行 `npm ci` 和 `npm run build`，最后发布构建出的 `public/`。

@@ -12,15 +12,16 @@
     "url": "https://github.com/jackyzha0/quartz.git"
   },
   "scripts": {
-    "quartz": "./quartz/bootstrap-cli.mjs",
-    "site:build": "node ./quartz/bootstrap-cli.mjs build -d wiki",
-    "site:serve": "node ./quartz/bootstrap-cli.mjs build --serve -d wiki --port 8081 --wsPort 3002",
+    "build": "npm run site:build",
+    "quartz": "cd site && node ./quartz/bootstrap-cli.mjs",
+    "site:build": "cd site && node ./quartz/bootstrap-cli.mjs build -d ../wiki -o ../public",
+    "site:serve": "cd site && node ./quartz/bootstrap-cli.mjs build --serve -d ../wiki -o ../public --port 8081 --wsPort 3002",
     "fetch:md": "defuddle parse",
     "fetch:pdf": "node scripts/web_to_pdf.mjs",
-    "check": "tsc --noEmit && prettier package.json quartz.config.ts quartz.layout.ts .github/workflows/deploy-pages.yml --check",
+    "check": "tsc --noEmit -p site/tsconfig.json && prettier package.json site/package.json site/quartz.config.ts site/quartz.layout.ts .github/workflows/deploy-pages.yml --check",
     "format": "npx prettier . --write",
     "test": "tsx --test",
-    "profile": "0x -D prof ./quartz/bootstrap-cli.mjs build --concurrency=1"
+    "profile": "cd site && 0x -D prof ./quartz/bootstrap-cli.mjs build -d ../wiki -o ../public --concurrency=1"
   },
   "engines": {
     "npm": ">=10.9.2",
