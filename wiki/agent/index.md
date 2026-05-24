@@ -6,7 +6,8 @@ tags:
 source_links:
   - raw/sources/agent/2026-04-17-when-to-use-multi-agent-systems.pdf
   - raw/sources/agent/2026-04-17-components-of-a-coding-agent.pdf
-updated_at: 2026-04-18
+  - raw/sources/agent/2026-05-07-evolver-self-evolving-agent-harness.pdf
+updated_at: 2026-05-07
 ---
 
 # Agent
@@ -20,3 +21,4 @@ updated_at: 2026-04-18
 
 - raw/sources/agent/2026-04-17-when-to-use-multi-agent-systems.pdf
 - raw/sources/agent/2026-04-17-components-of-a-coding-agent.pdf
+- raw/sources/agent/2026-05-07-evolver-self-evolving-agent-harness.pdf
