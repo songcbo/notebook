@@ -3,7 +3,7 @@ type: topic
 status: active
 tags:
   - notebook
-updated_at: 2026-04-24
+updated_at: 2026-05-22
 ---
 
 # Notebook
@@ -12,3 +12,4 @@ updated_at: 2026-04-24
 
 - [[agent/index|Agent]]
 - [[personal-finance/index|Personal Finance]]
+- [[饮食/index|饮食]]
