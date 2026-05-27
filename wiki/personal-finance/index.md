@@ -12,24 +12,22 @@ source_links:
   - raw/sources/personal-finance/2026-04-23-investor-gov-compound-interest.pdf
   - raw/sources/personal-finance/2026-04-23-investor-gov-understanding-fees.pdf
   - raw/sources/personal-finance/2026-04-23-investor-gov-social-media-stock-scams.pdf
-updated_at: 2026-04-23
+updated_at: 2026-05-27
 ---
 
-# Personal Finance
+# 个人金融
 
 ## 重点页面
 
-- [[personal-finance/notes/beginner-finance-glossary]]
-- [[personal-finance/notes/personal-finance-foundations]]
-- [[personal-finance/notes/beginner-investing-framework]]
-- [[personal-finance/notes/investment-risk-and-scam-red-flags]]
+- [[personal-finance/notes/金融投资术语手册]]
+- [[personal-finance/notes/投资入门框架]]
+- [[personal-finance/notes/投资风险与防骗红旗]]
 
 ## 学习顺序
 
-1. 先看 [[personal-finance/notes/beginner-finance-glossary]]
-2. 再看 [[personal-finance/notes/personal-finance-foundations]]
-3. 然后看 [[personal-finance/notes/beginner-investing-framework]]
-4. 最后看 [[personal-finance/notes/investment-risk-and-scam-red-flags]]
+1. 先看 [[personal-finance/notes/金融投资术语手册]]
+2. 再看 [[personal-finance/notes/投资入门框架]]
+3. 最后看 [[personal-finance/notes/投资风险与防骗红旗]]
 
 ## 来源入口
 

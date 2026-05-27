@@ -11,5 +11,5 @@ updated_at: 2026-05-22
 ## 领域入口
 
 - [[agent/index|Agent]]
-- [[personal-finance/index|Personal Finance]]
+- [[personal-finance/index|个人金融]]
 - [[饮食/index|饮食]]

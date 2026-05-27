@@ -23,12 +23,12 @@ updated_at: 2026-04-23
 ## 新增知识页
 
 - [[wiki/personal-finance/index]]
-- [[wiki/personal-finance/notes/beginner-finance-glossary]]
-- [[wiki/personal-finance/notes/personal-finance-foundations]]
-- [[wiki/personal-finance/notes/beginner-investing-framework]]
-- [[wiki/personal-finance/notes/investment-risk-and-scam-red-flags]]
+- [[wiki/personal-finance/notes/金融投资术语手册]]
+- [[wiki/personal-finance/notes/投资入门框架]]
+- [[wiki/personal-finance/notes/投资风险与防骗红旗]]
 
 ## 说明
 
 - 本次来源刻意避开内容农场、流量型财经自媒体和荐股内容，优先采用监管机构或公共理财服务机构材料。
 - 选用的来源主要来自美国和英国，因此基础原则具有较强普适性，但税务、账户制度、监管细节不应直接视为中国本地规则。
+- 2026-05-27 后续调整：移除 `personal-finance-foundations.md`，并将保留的金融知识页文件名中文化。
