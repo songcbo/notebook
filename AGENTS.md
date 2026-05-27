@@ -38,6 +38,11 @@
 - 代理围绕 `raw/inbox -> raw/sources -> wiki` 的流转工作。
 - 重点是来源归档、知识编译、知识页更新和结构维护。
 
+## GitHub 同步约定
+
+- 每次完成一块功能、知识页更新或新增内容后，完成必要验证并自动提交、推送到 GitHub。
+- 提交前仍需遵守上层 `AGENTS.md` 的 Commit 规则，先说明改动分类、commit title、commit 内容和包含文件。
+
 ## 顶层结构
 
 ```text
