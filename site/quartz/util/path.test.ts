@@ -259,6 +259,22 @@ describe("link strategies", () => {
       assert.strictEqual(path.transformLink(cur, "index#abc", opts), "../../#abc")
     })
 
+    test("preserves explicit relative attachment paths", () => {
+      const cur = "a/b/c" as FullSlug
+      assert.strictEqual(
+        path.transformLink(cur, "./diagrams/qm-architecture.svg", opts),
+        "./diagrams/qm-architecture.svg",
+      )
+      assert.strictEqual(
+        path.transformLink(cur, "./diagrams/qm-architecture.html", opts),
+        "./diagrams/qm-architecture",
+      )
+      assert.strictEqual(
+        path.transformLink(cur, "../shared/architecture.svg", opts),
+        "../shared/architecture.svg",
+      )
+    })
+
     test("from a/b/index", () => {
       const cur = "a/b/index" as FullSlug
       assert.strictEqual(path.transformLink(cur, "d", opts), "../../a/b/d")

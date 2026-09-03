@@ -227,9 +227,10 @@ export interface TransformOptions {
 }
 
 export function transformLink(src: FullSlug, target: string, opts: TransformOptions): RelativeURL {
+  const isExplicitRelative = /^\.{1,2}(?:\/|$)/.test(target)
   let targetSlug = transformInternalLink(target)
 
-  if (opts.strategy === "relative") {
+  if (isExplicitRelative || opts.strategy === "relative") {
     return targetSlug as RelativeURL
   } else {
     const folderTail = isFolderPath(targetSlug) ? "/" : ""
