@@ -1,0 +1,73 @@
+{
+  "schema_version": 1,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "Agent 应用请求与 Turn 主链路",
+    "subtitle": "从交互入口到 Runtime，再通过持久快照与实时增量回到客户端",
+    "output": "module-request-turn-flow.html",
+    "animation": "none",
+    "visual_preset": "signal-flow",
+    "quality_profile": "showcase",
+    "views": [
+      {
+        "id": "request-path",
+        "label": "请求主链路",
+        "focus": ["user_request", "api_entry", "resolve_context", "dispatch_turn", "agent_loop", "final_event", "client_view"],
+        "note": "观察一次请求如何穿过入口、控制面和 Runtime。"
+      },
+      {
+        "id": "realtime-path",
+        "label": "实时与重连",
+        "focus": ["agent_loop", "live_stream", "client_view", "durable_snapshot"],
+        "note": "实时增量只负责低延迟，重连仍依赖可恢复快照。"
+      }
+    ],
+    "viewBox": [980, 860]
+  },
+  "lanes": [
+    { "id": "surface", "label": "交互入口" },
+    { "id": "control", "label": "应用控制面" },
+    { "id": "runtime", "label": "Harness / Agent Runtime" },
+    { "id": "delivery", "label": "状态与实时交付" }
+  ],
+  "phases": [
+    { "id": "intake", "label": "接收", "fromCol": 0, "toCol": 1 },
+    { "id": "coordinate", "label": "解析与调度", "fromCol": 2, "toCol": 3, "variant": "emphasis" },
+    { "id": "run_and_deliver", "label": "执行与返回", "fromCol": 4, "toCol": 5, "variant": "dashed" }
+  ],
+  "mainPath": ["user_request", "api_entry", "resolve_context", "dispatch_turn", "agent_loop", "final_event", "client_view"],
+  "nodes": [
+    { "id": "user_request", "lane": "surface", "col": 0, "type": "external", "label": "用户请求", "sublabel": "Web / CLI / API" },
+    { "id": "api_entry", "lane": "surface", "col": 1, "type": "frontend", "label": "统一入口", "sublabel": "鉴权与协议转换" },
+    { "id": "client_view", "lane": "surface", "col": 5, "type": "frontend", "label": "客户端视图", "sublabel": "增量渲染与最终结果" },
+    { "id": "resolve_context", "lane": "control", "col": 2, "type": "backend", "label": "解析执行上下文", "sublabel": "Session / Scope / Actor" },
+    { "id": "dispatch_turn", "lane": "control", "col": 3, "type": "messagebus", "label": "调度 Turn", "sublabel": "租约、队列或进程路由" },
+    { "id": "agent_loop", "lane": "runtime", "col": 4, "type": "backend", "label": "Agent Loop", "sublabel": "模型、工具与多步执行" },
+    { "id": "final_event", "lane": "runtime", "col": 5, "type": "backend", "label": "终态事件", "sublabel": "完成、等待或失败" },
+    { "id": "durable_snapshot", "lane": "delivery", "col": 2, "type": "database", "label": "持久快照", "sublabel": "历史与派生状态" },
+    { "id": "live_stream", "lane": "delivery", "col": 4, "type": "messagebus", "label": "实时增量", "sublabel": "SSE / WebSocket", "width": 112 }
+  ],
+  "edges": [
+    { "id": "request_to_api", "from": "user_request", "to": "api_entry" },
+    { "id": "api_to_resolve", "from": "api_entry", "to": "resolve_context", "fromSide": "bottom", "toSide": "top", "channelY": 181, "variant": "emphasis" },
+    { "id": "resolve_to_dispatch", "from": "resolve_context", "to": "dispatch_turn" },
+    { "id": "dispatch_to_loop", "from": "dispatch_turn", "to": "agent_loop", "variant": "emphasis" },
+    { "id": "loop_to_final", "from": "agent_loop", "to": "final_event", "route": "straight" },
+    { "id": "final_to_client", "from": "final_event", "to": "client_view", "variant": "emphasis" },
+    { "id": "snapshot_to_resolve", "from": "durable_snapshot", "to": "resolve_context", "label": "恢复上下文", "variant": "dashed" },
+    { "id": "loop_to_stream", "from": "agent_loop", "to": "live_stream", "variant": "dashed" },
+    { "id": "stream_to_client", "from": "live_stream", "to": "client_view", "route": "outside-right", "variant": "dashed" }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "共同主链路",
+      "items": ["入口先转换为应用语义", "控制面决定执行身份和位置", "Runtime 负责模型循环与工具调用"]
+    },
+    {
+      "dot": "amber",
+      "title": "实时通信原则",
+      "items": ["实时通道不天然等于事实源", "断线后先读取持久状态，再追随实时增量", "等待审批也是一种非终态结果"]
+    }
+  ]
+}

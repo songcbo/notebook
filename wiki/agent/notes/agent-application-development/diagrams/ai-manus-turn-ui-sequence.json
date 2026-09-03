@@ -1,0 +1,60 @@
+{
+  "schema_version": 1,
+  "diagram_type": "sequence",
+  "meta": {
+    "title": "AI Manus：Session、Task、Redis 和 Docker 如何串起一次对话",
+    "subtitle": "前端保存本地运行状态，但最终以 PostgreSQL 事件和 Redis Cursor 恢复",
+    "output": "ai-manus-turn-ui-sequence.html",
+    "visual_preset": "editorial",
+    "quality_profile": "showcase",
+    "views": [
+      { "id": "chat", "label": "普通对话", "focus": ["user", "vue", "api", "pg", "redis", "runner", "agent"], "note": "看消息如何进入 Task 和 Agent loop。" },
+      { "id": "sandbox", "label": "文件与工具", "focus": ["agent", "docker", "pg", "redis", "vue"], "note": "工具在 Docker 中执行，结果通过事件回到前端。" },
+      { "id": "stop-resume", "label": "停止与恢复", "focus": ["vue", "api", "redis", "runner", "agent", "pg"], "note": "停止和审批响应都回到原 Task，而不是新建会话。" }
+    ],
+    "viewBox": [1500, 1240]
+  },
+  "participants": [
+    { "id": "user", "type": "external", "label": "User", "sublabel": "浏览器用户" },
+    { "id": "vue", "type": "frontend", "label": "Vue", "sublabel": "sessionStore" },
+    { "id": "api", "type": "backend", "label": "FastAPI", "sublabel": "Session API" },
+    { "id": "pg", "type": "database", "label": "PostgreSQL", "sublabel": "Session events" },
+    { "id": "redis", "type": "messagebus", "label": "Redis", "sublabel": "Task + Cursor" },
+    { "id": "runner", "type": "backend", "label": "TaskRunner", "sublabel": "Flow + lifecycle" },
+    { "id": "agent", "type": "backend", "label": "AgentBase", "sublabel": "reasoning + acting" },
+    { "id": "docker", "type": "cloud", "label": "Docker", "sublabel": "Sandbox tools" },
+    { "id": "sse", "type": "messagebus", "label": "Chat SSE", "sublabel": "event delivery" }
+  ],
+  "activations": [
+    { "participant": "vue", "from": 180, "to": 1120, "type": "frontend" },
+    { "participant": "api", "from": 240, "to": 990, "type": "backend" },
+    { "participant": "redis", "from": 340, "to": 1060, "type": "messagebus" },
+    { "participant": "runner", "from": 400, "to": 930, "type": "backend" },
+    { "participant": "agent", "from": 460, "to": 870, "type": "backend" },
+    { "participant": "sse", "from": 640, "to": 1150, "type": "messagebus" }
+  ],
+  "messages": [
+    { "id": "send", "from": "user", "to": "vue", "y": 190, "label": "① 发送消息和附件", "variant": "emphasis" },
+    { "id": "chat", "from": "vue", "to": "api", "y": 250, "label": "② POST /sessions/{id}/chat", "variant": "default" },
+    { "id": "accepted", "from": "api", "to": "pg", "y": 310, "label": "③ 先写 accepted + user event", "variant": "emphasis", "note": "前端断线后仍能从事件恢复。" },
+    { "id": "task", "from": "api", "to": "redis", "y": 370, "label": "④ 创建 / 复用 Task 和 Input", "variant": "default" },
+    { "id": "dispatch", "from": "redis", "to": "runner", "y": 430, "label": "⑤ dispatch 到 TaskRunner", "variant": "emphasis" },
+    { "id": "loop", "from": "runner", "to": "agent", "y": 490, "label": "⑥ FlowRuntime → AgentBase", "variant": "default" },
+    { "id": "file", "from": "agent", "to": "docker", "y": 550, "label": "⑦ file / bash / skill", "variant": "default" },
+    { "id": "tool-result", "from": "docker", "to": "agent", "y": 610, "label": "⑧ tool result + output_file", "variant": "return" },
+    { "id": "event", "from": "agent", "to": "pg", "y": 670, "label": "⑨ 持久化 message / tool / approval", "variant": "emphasis" },
+    { "id": "publish", "from": "pg", "to": "redis", "y": 730, "label": "⑩ 发布 Redis delivery event", "variant": "default" },
+    { "id": "stream", "from": "redis", "to": "sse", "y": 790, "label": "⑪ cursor + domain event_id", "variant": "default" },
+    { "id": "render", "from": "sse", "to": "vue", "y": 850, "label": "⑫ 增量渲染 / 去重", "variant": "return" },
+    { "id": "approval", "from": "vue", "to": "api", "y": 910, "label": "⑬ approval / stop", "variant": "security" },
+    { "id": "control", "from": "api", "to": "redis", "y": 970, "label": "⑭ 原 Task 继续或取消", "variant": "security" },
+    { "id": "terminal", "from": "runner", "to": "pg", "y": 1030, "label": "⑮ waiting / completed / error", "variant": "emphasis" },
+    { "id": "resume", "from": "vue", "to": "sse", "y": 1090, "label": "⑯ 断线：带 delivery_cursor 恢复", "variant": "dashed", "note": "活跃且非 approval_pending 时自动重连。" },
+    { "id": "final", "from": "sse", "to": "vue", "y": 1150, "label": "⑰ 收口；保留 Session 状态", "variant": "return" }
+  ],
+  "cards": [
+    { "dot": "cyan", "title": "两个存储各有职责", "items": ["PostgreSQL：完整 Session 事件和业务事实", "Redis：Task、Mailbox、Cursor 和在线投递", "Redis 丢消息时，前端可用 Cursor / 快照追赶"] },
+    { "dot": "amber", "title": "前端有自己的小状态机", "items": ["sessionStatus：pending / running / approval_pending / waiting", "stopPhase：idle / requesting / failed", "本地 optimistic message 失败时要回滚或重新绑定"] },
+    { "dot": "rose", "title": "Sandbox 不是存储", "items": ["附件先进入 FileStorage，再同步到 Docker", "产物从 Docker 下载回 MinIO + PostgreSQL 元数据", "Session 删除时要分别清理 Task、Sandbox、文件关系和二进制"] }
+  ]
+}

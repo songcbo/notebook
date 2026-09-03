@@ -1,0 +1,72 @@
+{
+  "schema_version": 1,
+  "diagram_type": "lifecycle",
+  "meta": {
+    "title": "Session、Turn 与执行载体生命周期",
+    "subtitle": "区分业务会话、一次 Turn、等待状态与可替换执行载体",
+    "output": "module-session-turn-lifecycle.html",
+    "animation": "none",
+    "visual_preset": "editorial",
+    "quality_profile": "showcase",
+    "views": [
+      {
+        "id": "main-turn",
+        "label": "Turn 主生命周期",
+        "focus": ["accepted", "queued", "running", "completed"],
+        "note": "业务 Turn 从受理、排队、执行走向完成。"
+      },
+      {
+        "id": "wait-and-resume",
+        "label": "等待与恢复",
+        "focus": ["running", "external_wait"],
+        "note": "等待不会自动结束 Session，恢复也不应新建业务 Turn。"
+      },
+      {
+        "id": "failure-path",
+        "label": "失败与停止",
+        "focus": ["running", "retryable_error", "failed", "cancelled"],
+        "note": "可恢复错误返回执行；耗尽预算或用户停止才进入终态。"
+      }
+    ],
+    "viewBox": [1040, 700]
+  },
+  "lanes": [
+    { "id": "main", "label": "Turn 主阶段" },
+    { "id": "waiting", "label": "非终态等待" },
+    { "id": "recovery", "label": "恢复路径" },
+    { "id": "terminal", "label": "终态" }
+  ],
+  "states": [
+    { "id": "accepted", "type": "start", "label": "Accepted", "sublabel": "请求已受理", "lane": "main", "col": 0, "step": "01" },
+    { "id": "queued", "type": "neutral", "label": "Queued", "sublabel": "等待执行载体", "lane": "main", "col": 1, "step": "02" },
+    { "id": "running", "type": "active", "label": "Running", "sublabel": "模型与工具循环", "lane": "main", "col": 2, "step": "03" },
+    { "id": "completed", "type": "success", "label": "Completed", "sublabel": "Turn 正常结束", "lane": "main", "col": 4, "step": "04" },
+    { "id": "external_wait", "type": "waiting", "label": "External Wait", "sublabel": "审批、用户输入或外部事件", "lane": "waiting", "col": 1, "tag": "pause" },
+    { "id": "retryable_error", "type": "failure", "label": "Retryable Error", "sublabel": "租约或执行载体失效", "lane": "recovery", "col": 0, "tag": "retry" },
+    { "id": "failed", "type": "failure", "label": "Failed", "sublabel": "恢复预算耗尽", "lane": "terminal", "col": 2, "tag": "terminal" },
+    { "id": "cancelled", "type": "failure", "label": "Cancelled", "sublabel": "用户或系统停止", "lane": "terminal", "col": 1, "tag": "terminal" }
+  ],
+  "transitions": [
+    { "id": "accept_queue", "from": "accepted", "to": "queued", "variant": "emphasis" },
+    { "id": "queue_run", "from": "queued", "to": "running", "variant": "emphasis" },
+    { "id": "run_complete", "from": "running", "to": "completed", "route": "straight", "variant": "emphasis" },
+    { "id": "run_wait", "from": "running", "to": "external_wait", "variant": "security" },
+    { "id": "wait_resume", "from": "external_wait", "to": "running", "variant": "emphasis" },
+    { "id": "run_retryable", "from": "running", "to": "retryable_error", "variant": "security" },
+    { "id": "retry_run", "from": "retryable_error", "to": "running", "variant": "emphasis" },
+    { "id": "retry_failed", "from": "retryable_error", "to": "failed", "variant": "security" },
+    { "id": "wait_cancelled", "from": "external_wait", "to": "cancelled", "variant": "security" }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "三个不同寿命",
+      "items": ["Session 可以跨越多个 Turn", "Turn 可以经历多次模型 Step", "Worker、Runner 或 Agent 实例只是可替换执行载体"]
+    },
+    {
+      "dot": "rose",
+      "title": "恢复约束",
+      "items": ["审批恢复继续原 Turn", "执行载体重建不能重复提交副作用", "Stop 与进程故障需要不同清理语义"]
+    }
+  ]
+}

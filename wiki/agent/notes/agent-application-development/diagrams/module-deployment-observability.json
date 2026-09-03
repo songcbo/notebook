@@ -1,0 +1,81 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Agent 应用部署、治理与验证平面",
+    "subtitle": "部署拓扑由产品边界决定，可观测性、安全和测试贯穿控制面与执行面",
+    "output": "module-deployment-observability.html",
+    "animation": "none",
+    "visual_preset": "blueprint",
+    "quality_profile": "showcase",
+    "views": [
+      {
+        "id": "runtime-topology",
+        "label": "运行拓扑",
+        "focus": ["client", "control_service", "runtime_worker", "sandbox_node", "durable_services"],
+        "note": "控制面、Runtime、Sandbox 和持久服务可以同机，也可以跨进程或跨节点。"
+      },
+      {
+        "id": "governance-plane",
+        "label": "治理与安全",
+        "focus": ["identity_policy", "control_service", "runtime_worker", "sandbox_node", "audit_observe"],
+        "note": "身份、权限、执行隔离和审计必须覆盖真实副作用链路。"
+      },
+      {
+        "id": "verification-plane",
+        "label": "验证分层",
+        "focus": ["test_harness", "control_service", "runtime_worker", "sandbox_node", "durable_services"],
+        "note": "单元、集成、快照和端到端测试分别证明不同边界。"
+      }
+    ],
+    "viewBox": [1260, 740]
+  },
+  "layout": {
+    "mode": "grid",
+    "origin": [54, 86],
+    "cols": 5,
+    "gapX": 62,
+    "gapY": 72,
+    "cellW": 176,
+    "cellH": 88
+  },
+  "components": [
+    { "id": "client", "type": "external", "label": "用户与客户端", "sublabel": "Web / CLI / API", "row": 1, "col": 0 },
+    { "id": "control_service", "type": "backend", "label": "控制面服务", "sublabel": "API、Session 与策略", "row": 1, "col": 1 },
+    { "id": "runtime_worker", "type": "backend", "label": "Runtime Worker", "sublabel": "Harness / Runner / Loop", "row": 1, "col": 2 },
+    { "id": "sandbox_node", "type": "cloud", "label": "Sandbox / Host", "sublabel": "本地、容器或远程节点", "row": 1, "col": 3 },
+    { "id": "durable_services", "type": "database", "label": "持久服务", "sublabel": "DB、Object Store、Event Log", "row": 2, "col": 1 },
+    { "id": "identity_policy", "type": "security", "label": "身份与策略", "sublabel": "认证、授权、凭据与网络", "row": 0, "col": 1 },
+    { "id": "audit_observe", "type": "external", "label": "可观测与审计", "sublabel": "Logs / Metrics / Traces / Cost", "row": 0, "col": 4 },
+    { "id": "test_harness", "type": "messagebus", "label": "验证体系", "sublabel": "Unit / Integration / E2E", "row": 2, "col": 3 }
+  ],
+  "boundaries": [
+    { "kind": "region", "label": "应用部署单元", "wraps": ["control_service", "runtime_worker", "sandbox_node", "durable_services"] },
+    { "kind": "security-group", "label": "副作用执行边界", "wraps": ["runtime_worker", "sandbox_node"] }
+  ],
+  "connections": [
+    { "id": "client_control", "from": "client", "to": "control_service", "label": "HTTPS", "variant": "emphasis" },
+    { "id": "control_runtime", "from": "control_service", "to": "runtime_worker", "variant": "emphasis" },
+    { "id": "runtime_sandbox", "from": "runtime_worker", "to": "sandbox_node", "label": "execute", "variant": "security" },
+    { "id": "control_state", "from": "control_service", "to": "durable_services" },
+    { "id": "runtime_state", "from": "runtime_worker", "to": "durable_services", "label": "events", "variant": "dashed" },
+    { "id": "policy_control", "from": "identity_policy", "to": "control_service", "variant": "security" },
+    { "id": "policy_runtime", "from": "identity_policy", "to": "runtime_worker", "variant": "security" },
+    { "id": "runtime_observe", "from": "runtime_worker", "to": "audit_observe", "label": "telemetry", "variant": "dashed" },
+    { "id": "sandbox_observe", "from": "sandbox_node", "to": "audit_observe", "label": "audit", "variant": "dashed" },
+    { "id": "tests_runtime", "from": "test_harness", "to": "runtime_worker", "label": "replay", "variant": "dashed" },
+    { "id": "tests_state", "from": "test_harness", "to": "durable_services", "label": "integration", "variant": "dashed" }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "部署不是固定答案",
+      "items": ["QM 偏组织级共享 Core", "Omnigent 显式拆分 Server、Host、Runner", "DSH 可作为本地 Headless 或 Web Profile", "AI Manus 当前以 Compose 与 per-session Docker 为主"]
+    },
+    {
+      "dot": "rose",
+      "title": "验证必须对应边界",
+      "items": ["协议和纯逻辑用单元测试", "存储与进程边界用集成测试", "模型可见行为需要快照或真实装配", "完整用户路径才进入端到端测试"]
+    }
+  ]
+}

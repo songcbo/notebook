@@ -1,0 +1,59 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Agent 浏览器插件：右侧面板与当前网页",
+    "subtitle": "浏览器插件负责看与做，Agent Runtime 负责思考、编排与治理",
+    "output": "browser-extension-architecture.html",
+    "visual_preset": "editorial",
+    "quality_profile": "showcase",
+    "views": [
+      {
+        "id": "current-page-path",
+        "label": "当前页面路径",
+        "focus": ["side-panel", "extension-worker", "content-script", "current-page"],
+        "note": "先读取当前页面，再执行点击、输入、滚动和截图。"
+      },
+      {
+        "id": "agent-control-path",
+        "label": "Agent 控制路径",
+        "focus": ["side-panel", "extension-worker", "agent-runtime", "policy"],
+        "note": "浏览器动作经过 Session、Policy 和 Approval 再落到标签页。"
+      },
+      {
+        "id": "web-fallback",
+        "label": "搜索与后台抓取",
+        "focus": ["agent-runtime", "web-provider"],
+        "note": "没有打开目标页面，或需要批量、定时抓取时，仍使用后端 Web 能力。"
+      }
+    ]
+  },
+  "components": [
+    { "id": "user", "type": "external", "label": "用户", "sublabel": "浏览器使用者", "pos": [40, 330], "size": [120, 60] },
+    { "id": "side-panel", "type": "frontend", "label": "Side Panel", "sublabel": "右侧对话面板", "tag": "随时打开", "pos": [210, 330], "size": [150, 60] },
+    { "id": "extension-worker", "type": "backend", "label": "Extension Worker", "sublabel": "tab / session / 消息", "pos": [410, 330], "size": [160, 60] },
+    { "id": "content-script", "type": "frontend", "label": "Content Script", "sublabel": "读取 DOM、执行动作", "tag": "页面内执行", "pos": [620, 330], "size": [160, 60] },
+    { "id": "current-page", "type": "external", "label": "当前网页", "sublabel": "DOM / iframe / 登录态", "pos": [840, 330], "size": [150, 60] },
+    { "id": "web-provider", "type": "cloud", "label": "Web Providers", "sublabel": "Search / Fetch / 定时任务", "pos": [40, 110], "size": [160, 68] },
+    { "id": "agent-runtime", "type": "backend", "label": "Agent Runtime", "sublabel": "LLM / Tool / Turn", "tag": "后端控制面", "pos": [410, 110], "size": [160, 68] },
+    { "id": "policy", "type": "security", "label": "Policy + Approval", "sublabel": "权限与人工确认", "pos": [780, 110], "size": [160, 68] }
+  ],
+  "boundaries": [
+    { "kind": "region", "label": "浏览器扩展边界", "wraps": ["side-panel", "extension-worker", "content-script"] },
+    { "kind": "security-group", "label": "Agent 后端治理边界", "wraps": ["agent-runtime", "policy"] }
+  ],
+  "connections": [
+    { "id": "user-panel", "from": "user", "to": "side-panel", "variant": "emphasis", "route": "straight" },
+    { "id": "panel-worker", "from": "side-panel", "to": "extension-worker" },
+    { "id": "worker-content", "from": "extension-worker", "to": "content-script", "variant": "emphasis" },
+    { "id": "content-page", "from": "content-script", "to": "current-page", "variant": "emphasis" },
+    { "id": "worker-runtime", "from": "extension-worker", "to": "agent-runtime" },
+    { "id": "runtime-policy", "from": "agent-runtime", "to": "policy", "variant": "security" },
+    { "id": "runtime-web", "from": "agent-runtime", "to": "web-provider", "variant": "dashed" }
+  ],
+  "cards": [
+    { "dot": "cyan", "title": "当前页面优先", "items": ["DOM / Snapshot 直接来自当前标签页", "点击、输入、滚动和截图在 Content Script 中执行"] },
+    { "dot": "emerald", "title": "后端仍然存在", "items": ["LLM、Turn、工具编排、搜索和定时任务留在 Agent Runtime", "插件不保存模型密钥"] },
+    { "dot": "rose", "title": "安全边界", "items": ["tab_id + snapshot_id 防止误操作", "敏感动作经过 Policy / Approval，页面内容按最小范围上传"] }
+  ]
+}

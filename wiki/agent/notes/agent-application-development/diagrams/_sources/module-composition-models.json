@@ -1,0 +1,56 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "四个项目的模块组合方式",
+    "subtitle": "同样要完成配置解析、Provider 选择和作用域生命周期，但扩展单元与装配入口不同",
+    "output": "module-composition-models.html",
+    "animation": "none",
+    "visual_preset": "editorial",
+    "quality_profile": "showcase",
+    "viewBox": [1280, 800],
+    "views": [
+      { "id": "qm", "label": "QM Wiring", "focus": ["qm_config", "qm_wiring", "qm_result"], "note": "显式 composition root 创建 Store、Provider 和 Core 服务。" },
+      { "id": "omnigent", "label": "Omnigent Registry", "focus": ["omni_spec", "omni_registry", "omni_result"], "note": "AgentSpec 与 Harness Registry 解析内建和 entry-point 扩展。" },
+      { "id": "dsh", "label": "DSH Cordis", "focus": ["dsh_profile", "dsh_context", "dsh_result"], "note": "Profile/Bundle 构造插件树，Context 提供服务、事件和 Effect 作用域。" },
+      { "id": "manus", "label": "AI Manus Registry", "focus": ["manus_yaml", "manus_registry", "manus_result"], "note": "ProjectRegistry 与 builder 根据项目配置组装 Native Harness。" }
+    ]
+  },
+  "components": [
+    { "id": "qm_config", "type": "external", "label": "QM Config", "sublabel": "env · db · harness", "pos": [55, 90], "size": [210, 62] },
+    { "id": "qm_wiring", "type": "backend", "label": "createWiring", "sublabel": "显式创建并连接依赖", "pos": [55, 290], "size": [210, 72], "tag": "Composition Root" },
+    { "id": "qm_result", "type": "database", "label": "Core Runtime", "sublabel": "Store · Sandbox · Harness", "pos": [55, 510], "size": [210, 72] },
+
+    { "id": "omni_spec", "type": "external", "label": "AgentSpec", "sublabel": "agent.yaml · defaults", "pos": [355, 90], "size": [210, 62] },
+    { "id": "omni_registry", "type": "messagebus", "label": "Registries", "sublabel": "Agent · Harness · Tool", "pos": [355, 290], "size": [210, 72], "tag": "Entry Points" },
+    { "id": "omni_result", "type": "database", "label": "Runner Context", "sublabel": "Harness · Policy · Stores", "pos": [355, 510], "size": [210, 72] },
+
+    { "id": "dsh_profile", "type": "external", "label": "Profile / Bundle", "sublabel": "插件清单与 patch", "pos": [655, 90], "size": [210, 62] },
+    { "id": "dsh_context", "type": "backend", "label": "Cordis Context", "sublabel": "service · event · effect", "pos": [655, 290], "size": [210, 72], "tag": "Plugin Tree" },
+    { "id": "dsh_result", "type": "database", "label": "Scoped Services", "sublabel": "Loop · Tools · State", "pos": [655, 510], "size": [210, 72] },
+
+    { "id": "manus_yaml", "type": "external", "label": "Project YAML", "sublabel": "agents · flow · tools", "pos": [955, 90], "size": [210, 62] },
+    { "id": "manus_registry", "type": "backend", "label": "ProjectRegistry", "sublabel": "loader · builder · cache", "pos": [955, 290], "size": [210, 72], "tag": "Native Harness" },
+    { "id": "manus_result", "type": "database", "label": "FlowRuntime", "sublabel": "instances · loops · mailbox", "pos": [955, 510], "size": [210, 72] }
+  ],
+  "boundaries": [
+    { "kind": "region", "label": "QM · 显式依赖装配", "wraps": ["qm_config", "qm_wiring", "qm_result"], "pad": 22 },
+    { "kind": "region", "label": "Omnigent · 注册表与分发", "wraps": ["omni_spec", "omni_registry", "omni_result"], "pad": 22 },
+    { "kind": "region", "label": "DSH · 插件树与作用域", "wraps": ["dsh_profile", "dsh_context", "dsh_result"], "pad": 22 },
+    { "kind": "region", "label": "AI Manus · 项目级装配", "wraps": ["manus_yaml", "manus_registry", "manus_result"], "pad": 22 }
+  ],
+  "connections": [
+    { "id": "qm-config-wiring", "from": "qm_config", "to": "qm_wiring", "label": "parse", "variant": "emphasis", "fromSide": "bottom", "toSide": "top", "labelAt": [160, 218] },
+    { "id": "qm-wiring-result", "from": "qm_wiring", "to": "qm_result", "label": "construct", "fromSide": "bottom", "toSide": "top", "labelAt": [160, 440] },
+    { "id": "omni-spec-registry", "from": "omni_spec", "to": "omni_registry", "label": "resolve", "variant": "emphasis", "fromSide": "bottom", "toSide": "top", "labelAt": [460, 218] },
+    { "id": "omni-registry-result", "from": "omni_registry", "to": "omni_result", "label": "instantiate", "fromSide": "bottom", "toSide": "top", "labelAt": [460, 440] },
+    { "id": "dsh-profile-context", "from": "dsh_profile", "to": "dsh_context", "label": "apply", "variant": "emphasis", "fromSide": "bottom", "toSide": "top", "labelAt": [760, 218] },
+    { "id": "dsh-context-result", "from": "dsh_context", "to": "dsh_result", "label": "provide", "fromSide": "bottom", "toSide": "top", "labelAt": [760, 440] },
+    { "id": "manus-yaml-registry", "from": "manus_yaml", "to": "manus_registry", "label": "load", "variant": "emphasis", "fromSide": "bottom", "toSide": "top", "labelAt": [1060, 218] },
+    { "id": "manus-registry-result", "from": "manus_registry", "to": "manus_result", "label": "build", "fromSide": "bottom", "toSide": "top", "labelAt": [1060, 440] }
+  ],
+  "cards": [
+    { "dot": "cyan", "title": "共同要回答", "items": ["配置从哪里来、何时解析", "Provider 如何选择和覆盖", "实例属于应用、Session 还是 Turn", "关闭时由谁释放资源"] },
+    { "dot": "violet", "title": "扩展粒度", "items": ["QM：代码级 Provider 与 Store", "Omnigent：Spec、Registry 与 entry point", "DSH：任意能力都可成为插件", "AI Manus：以项目配置和 builder 为主"] }
+  ]
+}

@@ -1,0 +1,290 @@
+<svg viewBox="0 0 1400 1120" role="img" aria-labelledby="archify-diagram-title archify-diagram-description" data-preset="blueprint" data-quality-profile="showcase">
+        <title id="archify-diagram-title">DSH：事件日志如何同时驱动 Agent 和前端</title>
+        <desc id="archify-diagram-description">Profile 只是入口；Session append-only log 才是事实，Projection 和 Mux 负责让人看懂</desc>
+        <!-- Definitions -->
+        <defs>
+          <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" class="m-default" />
+          </marker>
+          <marker id="arrowhead-emphasis" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" class="m-emphasis" />
+          </marker>
+          <marker id="arrowhead-security" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" class="m-security" />
+          </marker>
+          <marker id="arrowhead-dashed" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" class="m-dashed" />
+          </marker>
+          <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+            <path d="M 40 0 L 0 0 0 40" class="c-grid" stroke-width="0.5"/>
+          </pattern>
+        </defs>
+
+        <!-- Background Grid -->
+        <rect width="100%" height="100%" fill="url(#grid)" />
+
+        <!-- Time Segments -->
+
+
+        <!-- Lifelines -->
+        <path d="M 62 142 L 62 1055" class="a-default" stroke-width="0.8" stroke-dasharray="3,7"/>
+        <path d="M 170 142 L 170 1055" class="a-default" stroke-width="0.8" stroke-dasharray="3,7"/>
+        <path d="M 278 142 L 278 1055" class="a-default" stroke-width="0.8" stroke-dasharray="3,7"/>
+        <path d="M 386 142 L 386 1055" class="a-default" stroke-width="0.8" stroke-dasharray="3,7"/>
+        <path d="M 494 142 L 494 1055" class="a-default" stroke-width="0.8" stroke-dasharray="3,7"/>
+        <path d="M 602 142 L 602 1055" class="a-default" stroke-width="0.8" stroke-dasharray="3,7"/>
+        <path d="M 710 142 L 710 1055" class="a-default" stroke-width="0.8" stroke-dasharray="3,7"/>
+        <path d="M 818 142 L 818 1055" class="a-default" stroke-width="0.8" stroke-dasharray="3,7"/>
+
+        <!-- Activations -->
+        <rect x="165" y="180" width="10" height="830" rx="3" class="c-mask"/>
+        <rect x="165" y="180" width="10" height="830" rx="3" class="c-frontend" stroke-width="1"/>
+        <rect x="381" y="300" width="10" height="600" rx="3" class="c-mask"/>
+        <rect x="381" y="300" width="10" height="600" rx="3" class="c-backend" stroke-width="1"/>
+        <rect x="489" y="360" width="10" height="620" rx="3" class="c-mask"/>
+        <rect x="489" y="360" width="10" height="620" rx="3" class="c-database" stroke-width="1"/>
+        <rect x="597" y="430" width="10" height="390" rx="3" class="c-mask"/>
+        <rect x="597" y="430" width="10" height="390" rx="3" class="c-backend" stroke-width="1"/>
+        <rect x="813" y="610" width="10" height="440" rx="3" class="c-mask"/>
+        <rect x="813" y="610" width="10" height="440" rx="3" class="c-messagebus" stroke-width="1"/>
+
+        <!-- Messages -->
+        <g data-edge-from="user" data-edge-to="web" data-edge-label="① 输入消息" data-edge-key="0" data-edge-id="send">
+          <path data-composition-edge-from="user" data-composition-edge-to="web" data-composition-edge-id="send" data-composition-points="69,190;163,190" d="M 69 190 L 163 190" class="a-emphasis" stroke-width="1.8" marker-end="url(#arrowhead-emphasis)"/>
+        <g data-detail="context">
+          <rect x="84" y="170" width="64" height="16" rx="3" class="c-mask"/>
+          <text x="116" y="180" class="t-backend" font-size="9" text-anchor="middle">① 输入消息</text>
+        </g>
+        </g>
+
+        <g data-edge-from="web" data-edge-to="profile" data-edge-label="② Profile command / SDK request" data-edge-key="1" data-edge-id="command">
+          <path data-composition-edge-from="web" data-composition-edge-to="profile" data-composition-edge-id="command" data-composition-points="177,250;271,250" d="M 177 250 L 271 250" class="a-default" stroke-width="1.4" marker-end="url(#arrowhead)"/>
+        <g data-detail="context">
+          <rect x="137.39999999999998" y="230" width="173.20000000000002" height="16" rx="3" class="c-mask"/>
+          <text x="224" y="240" class="t-backend" font-size="9" text-anchor="middle">② Profile command / SDK request</text>
+        </g>
+        </g>
+
+        <g data-edge-from="profile" data-edge-to="loop" data-edge-label="③ 装配 Cordis Context" data-edge-key="2" data-edge-id="context">
+          <path data-composition-edge-from="profile" data-composition-edge-to="loop" data-composition-edge-id="context" data-composition-points="285,310;379,310" d="M 285 310 L 379 310" class="a-emphasis" stroke-width="1.8" marker-end="url(#arrowhead-emphasis)"/>
+        <g data-detail="context">
+          <rect x="271.4" y="290" width="121.2" height="16" rx="3" class="c-mask"/>
+          <text x="332" y="300" class="t-backend" font-size="9" text-anchor="middle">③ 装配 Cordis Context</text>
+        </g>
+        </g>
+
+        <g data-edge-from="loop" data-edge-to="session" data-edge-label="④ append turn/start + user/message" data-edge-key="3" data-edge-id="turn-start">
+          <path data-composition-edge-from="loop" data-composition-edge-to="session" data-composition-edge-id="turn-start" data-composition-points="393,370;487,370" d="M 393 370 L 487 370" class="a-emphasis" stroke-width="1.8" marker-end="url(#arrowhead-emphasis)"/>
+        <g data-detail="context">
+          <rect x="345.6" y="350" width="188.8" height="16" rx="3" class="c-mask"/>
+          <text x="440" y="360" class="t-backend" font-size="9" text-anchor="middle">④ append turn/start + user/message</text>
+        </g>
+        <text data-detail="fine" x="405" y="388" class="t-dim" font-size="7">事件先落日志，才算这一步发生。</text>
+        </g>
+
+        <g data-edge-from="session" data-edge-to="projection" data-edge-label="⑤ fold revision → projection" data-edge-key="4" data-edge-id="fold">
+          <path data-composition-edge-from="session" data-composition-edge-to="projection" data-composition-edge-id="fold" data-composition-points="501,430;595,430" d="M 501 430 L 595 430" class="a-default" stroke-width="1.4" marker-end="url(#arrowhead)"/>
+        <g data-detail="context">
+          <rect x="469.2" y="410" width="157.6" height="16" rx="3" class="c-mask"/>
+          <text x="548" y="420" class="t-backend" font-size="9" text-anchor="middle">⑤ fold revision → projection</text>
+        </g>
+        </g>
+
+        <g data-edge-from="projection" data-edge-to="loop" data-edge-label="⑥ 生成模型可见消息" data-edge-key="5" data-edge-id="llm-view">
+          <path data-composition-edge-from="projection" data-composition-edge-to="loop" data-composition-edge-id="llm-view" data-composition-points="595,490;393,490" d="M 595 490 L 393 490" class="a-default" stroke-width="1.4" stroke-dasharray="3,5" marker-end="url(#arrowhead)"/>
+        <g data-detail="context">
+          <rect x="441.2" y="470" width="105.60000000000001" height="16" rx="3" class="c-mask"/>
+          <text x="494" y="480" class="t-muted" font-size="9" text-anchor="middle">⑥ 生成模型可见消息</text>
+        </g>
+        </g>
+
+        <g data-edge-from="loop" data-edge-to="tools" data-edge-label="⑦ Tool Provider / MCP" data-edge-key="6" data-edge-id="tool-call">
+          <path data-composition-edge-from="loop" data-composition-edge-to="tools" data-composition-edge-id="tool-call" data-composition-points="393,550;703,550" d="M 393 550 L 703 550" class="a-default" stroke-width="1.4" marker-end="url(#arrowhead)"/>
+        <g data-detail="context">
+          <rect x="487.4" y="530" width="121.2" height="16" rx="3" class="c-mask"/>
+          <text x="548" y="540" class="t-backend" font-size="9" text-anchor="middle">⑦ Tool Provider / MCP</text>
+        </g>
+        </g>
+
+        <g data-edge-from="tools" data-edge-to="session" data-edge-label="⑧ append tool/call + tool/result" data-edge-key="7" data-edge-id="tool-event">
+          <path data-composition-edge-from="tools" data-composition-edge-to="session" data-composition-edge-id="tool-event" data-composition-points="703,610;501,610" d="M 703 610 L 501 610" class="a-emphasis" stroke-width="1.8" marker-end="url(#arrowhead-emphasis)"/>
+        <g data-detail="context">
+          <rect x="512.8" y="590" width="178.4" height="16" rx="3" class="c-mask"/>
+          <text x="602" y="600" class="t-backend" font-size="9" text-anchor="middle">⑧ append tool/call + tool/result</text>
+        </g>
+        </g>
+
+        <g data-edge-from="session" data-edge-to="mux" data-edge-label="⑨ session/event + revision" data-edge-key="8" data-edge-id="mux-event">
+          <path data-composition-edge-from="session" data-composition-edge-to="mux" data-composition-edge-id="mux-event" data-composition-points="501,670;811,670" d="M 501 670 L 811 670" class="a-default" stroke-width="1.4" marker-end="url(#arrowhead)"/>
+        <g data-detail="context">
+          <rect x="582.4" y="650" width="147.20000000000002" height="16" rx="3" class="c-mask"/>
+          <text x="656" y="660" class="t-backend" font-size="9" text-anchor="middle">⑨ session/event + revision</text>
+        </g>
+        </g>
+
+        <g data-edge-from="mux" data-edge-to="web" data-edge-label="⑩ UI projection 更新" data-edge-key="9" data-edge-id="ui-event">
+          <path data-composition-edge-from="mux" data-composition-edge-to="web" data-composition-edge-id="ui-event" data-composition-points="811,730;177,730" d="M 811 730 L 177 730" class="a-default" stroke-width="1.4" stroke-dasharray="3,5" marker-end="url(#arrowhead)"/>
+        <g data-detail="context">
+          <rect x="436" y="710" width="116" height="16" rx="3" class="c-mask"/>
+          <text x="494" y="720" class="t-muted" font-size="9" text-anchor="middle">⑩ UI projection 更新</text>
+        </g>
+        </g>
+
+        <g data-edge-from="loop" data-edge-to="session" data-edge-label="⑪ request/header：等待审批" data-edge-key="10" data-edge-id="approval">
+          <path data-composition-edge-from="loop" data-composition-edge-to="session" data-composition-edge-id="approval" data-composition-points="393,790;487,790" d="M 393 790 L 487 790" class="a-security" stroke-width="1.4" marker-end="url(#arrowhead-security)"/>
+        <g data-detail="context">
+          <rect x="366.4" y="770" width="147.20000000000002" height="16" rx="3" class="c-mask"/>
+          <text x="440" y="780" class="t-security" font-size="9" text-anchor="middle">⑪ request/header：等待审批</text>
+        </g>
+        </g>
+
+        <g data-edge-from="web" data-edge-to="mux" data-edge-label="⑫ approval response / cancel" data-edge-key="11" data-edge-id="answer">
+          <path data-composition-edge-from="web" data-composition-edge-to="mux" data-composition-edge-id="answer" data-composition-points="177,850;811,850" d="M 177 850 L 811 850" class="a-security" stroke-width="1.4" marker-end="url(#arrowhead-security)"/>
+        <g data-detail="context">
+          <rect x="415.2" y="830" width="157.6" height="16" rx="3" class="c-mask"/>
+          <text x="494" y="840" class="t-security" font-size="9" text-anchor="middle">⑫ approval response / cancel</text>
+        </g>
+        </g>
+
+        <g data-edge-from="loop" data-edge-to="session" data-edge-label="⑬ append turn/end" data-edge-key="12" data-edge-id="end">
+          <path data-composition-edge-from="loop" data-composition-edge-to="session" data-composition-edge-id="end" data-composition-points="393,910;487,910" d="M 393 910 L 487 910" class="a-emphasis" stroke-width="1.8" marker-end="url(#arrowhead-emphasis)"/>
+        <g data-detail="context">
+          <rect x="389.8" y="890" width="100.4" height="16" rx="3" class="c-mask"/>
+          <text x="440" y="900" class="t-backend" font-size="9" text-anchor="middle">⑬ append turn/end</text>
+        </g>
+        </g>
+
+        <g data-edge-from="web" data-edge-to="mux" data-edge-label="⑭ 重连：subscribe + lastSeq" data-edge-key="13" data-edge-id="resync">
+          <path data-composition-edge-from="web" data-composition-edge-to="mux" data-composition-edge-id="resync" data-composition-points="177,970;811,970" d="M 177 970 L 811 970" class="a-dashed" stroke-width="1.4" marker-end="url(#arrowhead-dashed)"/>
+        <g data-detail="context">
+          <rect x="417.8" y="950" width="152.4" height="16" rx="3" class="c-mask"/>
+          <text x="494" y="960" class="t-messagebus" font-size="9" text-anchor="middle">⑭ 重连：subscribe + lastSeq</text>
+        </g>
+        <text data-detail="fine" x="189" y="988" class="t-dim" font-size="7">从 Session log 补缺，再继续 live tail。</text>
+        </g>
+
+        <!-- Segment Labels -->
+
+
+        <!-- Participants -->
+        <g id="node-user" data-node-id="user" data-node-label="User" tabindex="0" role="button" aria-label="Focus User, 说一句话, Sequence participant" aria-pressed="false" data-node-kind="external" data-node-sublabel="说一句话" data-node-context="Sequence participant">
+          <title>User · 说一句话 · Sequence participant</title>
+          <rect x="19" y="72" width="86" height="54" rx="6" class="c-mask"/>
+          <rect x="19" y="72" width="86" height="54" rx="6" class="c-external" stroke-width="1.5"/>
+          <g aria-hidden="true" data-semantic-sigil="external" class="semantic-sigil s-external" transform="translate(25 78) scale(0.6875)">
+            <rect x="2.5" y="5" width="8.5" height="8" rx="1.5"/>
+            <path d="M8 2.5h5.5V8M13.5 2.5 7.5 8.5"/>
+          </g>
+          <text data-detail-anchor x="62" y="94" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">User</text>
+          <text data-detail="context" x="62" y="111" class="t-muted" font-size="7" text-anchor="middle">说一句话</text>
+        </g>
+
+        <g id="node-web" data-node-id="web" data-node-label="Web UI" tabindex="0" role="button" aria-label="Focus Web UI, Session client, Sequence participant" aria-pressed="false" data-node-kind="frontend" data-node-sublabel="Session client" data-node-context="Sequence participant">
+          <title>Web UI · Session client · Sequence participant</title>
+          <rect x="127" y="72" width="86" height="54" rx="6" class="c-mask"/>
+          <rect x="127" y="72" width="86" height="54" rx="6" class="c-frontend" stroke-width="1.5"/>
+          <g aria-hidden="true" data-semantic-sigil="frontend" class="semantic-sigil s-frontend" transform="translate(133 78) scale(0.6875)">
+            <rect x="2" y="3" width="12" height="10" rx="2"/>
+            <path d="M2 6.5h12"/>
+            <circle cx="4.1" cy="4.8" r=".7" class="sigil-fill"/>
+            <circle cx="6.3" cy="4.8" r=".7" class="sigil-fill"/>
+          </g>
+          <text data-detail-anchor x="170" y="94" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">Web UI</text>
+          <text data-detail="context" x="170" y="111" class="t-muted" font-size="7" text-anchor="middle">Session client</text>
+        </g>
+
+        <g id="node-profile" data-node-id="profile" data-node-label="Profile" tabindex="0" role="button" aria-label="Focus Profile, CLI / Web / SDK, Sequence participant" aria-pressed="false" data-node-kind="backend" data-node-sublabel="CLI / Web / SDK" data-node-context="Sequence participant">
+          <title>Profile · CLI / Web / SDK · Sequence participant</title>
+          <rect x="235" y="72" width="86" height="54" rx="6" class="c-mask"/>
+          <rect x="235" y="72" width="86" height="54" rx="6" class="c-backend" stroke-width="1.5"/>
+          <g aria-hidden="true" data-semantic-sigil="backend" class="semantic-sigil s-backend" transform="translate(241 78) scale(0.6875)">
+            <path d="M6 3 3 8l3 5M10 3l3 5-3 5"/>
+          </g>
+          <text data-detail-anchor x="278" y="94" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">Profile</text>
+          <text data-detail="context" x="278" y="111" class="t-muted" font-size="7" text-anchor="middle">CLI / Web / SDK</text>
+        </g>
+
+        <g id="node-loop" data-node-id="loop" data-node-label="Agent Loop" tabindex="0" role="button" aria-label="Focus Agent Loop, Cordis Context, Sequence participant" aria-pressed="false" data-node-kind="backend" data-node-sublabel="Cordis Context" data-node-context="Sequence participant">
+          <title>Agent Loop · Cordis Context · Sequence participant</title>
+          <rect x="343" y="72" width="86" height="54" rx="6" class="c-mask"/>
+          <rect x="343" y="72" width="86" height="54" rx="6" class="c-backend" stroke-width="1.5"/>
+          <g aria-hidden="true" data-semantic-sigil="backend" class="semantic-sigil s-backend" transform="translate(349 78) scale(0.6875)">
+            <path d="M6 3 3 8l3 5M10 3l3 5-3 5"/>
+          </g>
+          <text data-detail-anchor x="386" y="94" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">Agent Loop</text>
+          <text data-detail="context" x="386" y="111" class="t-muted" font-size="7" text-anchor="middle">Cordis Context</text>
+        </g>
+
+        <g id="node-session" data-node-id="session" data-node-label="Session Log" tabindex="0" role="button" aria-label="Focus Session Log, append-only events, Sequence participant" aria-pressed="false" data-node-kind="database" data-node-sublabel="append-only events" data-node-context="Sequence participant">
+          <title>Session Log · append-only events · Sequence participant</title>
+          <rect x="451" y="72" width="86" height="54" rx="6" class="c-mask"/>
+          <rect x="451" y="72" width="86" height="54" rx="6" class="c-database" stroke-width="1.5"/>
+          <g aria-hidden="true" data-semantic-sigil="database" class="semantic-sigil s-database" transform="translate(457 78) scale(0.6875)">
+            <ellipse cx="8" cy="4" rx="5" ry="2"/>
+            <path d="M3 4v8c0 1.1 2.2 2 5 2s5-.9 5-2V4M3 8c0 1.1 2.2 2 5 2s5-.9 5-2"/>
+          </g>
+          <text data-detail-anchor x="494" y="94" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">Session Log</text>
+          <text data-detail="context" x="494" y="111" class="t-muted" font-size="7" text-anchor="middle">append-only events</text>
+        </g>
+
+        <g id="node-projection" data-node-id="projection" data-node-label="Projection" tabindex="0" role="button" aria-label="Focus Projection, history + LLM view, Sequence participant" aria-pressed="false" data-node-kind="backend" data-node-sublabel="history + LLM view" data-node-context="Sequence participant">
+          <title>Projection · history + LLM view · Sequence participant</title>
+          <rect x="559" y="72" width="86" height="54" rx="6" class="c-mask"/>
+          <rect x="559" y="72" width="86" height="54" rx="6" class="c-backend" stroke-width="1.5"/>
+          <g aria-hidden="true" data-semantic-sigil="backend" class="semantic-sigil s-backend" transform="translate(565 78) scale(0.6875)">
+            <path d="M6 3 3 8l3 5M10 3l3 5-3 5"/>
+          </g>
+          <text data-detail-anchor x="602" y="94" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">Projection</text>
+          <text data-detail="context" x="602" y="111" class="t-muted" font-size="7" text-anchor="middle">history + LLM view</text>
+        </g>
+
+        <g id="node-tools" data-node-id="tools" data-node-label="Tools" tabindex="0" role="button" aria-label="Focus Tools, FS / Shell / MCP, Sequence participant" aria-pressed="false" data-node-kind="cloud" data-node-sublabel="FS / Shell / MCP" data-node-context="Sequence participant">
+          <title>Tools · FS / Shell / MCP · Sequence participant</title>
+          <rect x="667" y="72" width="86" height="54" rx="6" class="c-mask"/>
+          <rect x="667" y="72" width="86" height="54" rx="6" class="c-cloud" stroke-width="1.5"/>
+          <g aria-hidden="true" data-semantic-sigil="cloud" class="semantic-sigil s-cloud" transform="translate(673 78) scale(0.6875)">
+            <path d="M4.3 12.5h7.3a2.4 2.4 0 0 0 .2-4.8 4 4 0 0 0-7.5-1.3A3.1 3.1 0 0 0 4.3 12.5Z"/>
+          </g>
+          <text data-detail-anchor x="710" y="94" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">Tools</text>
+          <text data-detail="context" x="710" y="111" class="t-muted" font-size="7" text-anchor="middle">FS / Shell / MCP</text>
+        </g>
+
+        <g id="node-mux" data-node-id="mux" data-node-label="Mux" tabindex="0" role="button" aria-label="Focus Mux, event + host frames, Sequence participant" aria-pressed="false" data-node-kind="messagebus" data-node-sublabel="event + host frames" data-node-context="Sequence participant">
+          <title>Mux · event + host frames · Sequence participant</title>
+          <rect x="775" y="72" width="86" height="54" rx="6" class="c-mask"/>
+          <rect x="775" y="72" width="86" height="54" rx="6" class="c-messagebus" stroke-width="1.5"/>
+          <g aria-hidden="true" data-semantic-sigil="messagebus" class="semantic-sigil s-messagebus" transform="translate(781 78) scale(0.6875)">
+            <path d="M2.5 4.5h11M2.5 8h11M2.5 11.5h11"/>
+            <circle cx="5" cy="4.5" r="1" class="sigil-fill"/>
+            <circle cx="10.5" cy="8" r="1" class="sigil-fill"/>
+            <circle cx="7" cy="11.5" r="1" class="sigil-fill"/>
+          </g>
+          <text data-detail-anchor x="818" y="94" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">Mux</text>
+          <text data-detail="context" x="818" y="111" class="t-muted" font-size="6.8" text-anchor="middle">event + host frames</text>
+        </g>
+
+        <!-- Legend -->
+        <g data-legend>
+          <text x="40" y="1046" class="t-primary" font-size="10" font-weight="600">Legend</text>
+          <g data-legend-semantic-kind="emphasis" data-legend-x="40" data-legend-baseline="1066" data-legend-width="78">
+            <path d="M 40 1063 L 74 1063" class="a-emphasis" stroke-width="1.8" marker-end="url(#arrowhead-emphasis)"/>
+            <text x="83" y="1066" class="t-muted" font-size="8">request</text>
+          </g>
+          <g data-legend-semantic-kind="return" data-legend-x="140" data-legend-baseline="1066" data-legend-width="73">
+            <path d="M 140 1063 L 174 1063" class="a-default" stroke-width="1.4" stroke-dasharray="3,5" marker-end="url(#arrowhead)"/>
+            <text x="183" y="1066" class="t-muted" font-size="8">return</text>
+          </g>
+          <g data-legend-semantic-kind="security" data-legend-x="235" data-legend-baseline="1066" data-legend-width="83">
+            <path d="M 235 1063 L 269 1063" class="a-security" stroke-width="1.4" marker-end="url(#arrowhead-security)"/>
+            <text x="278" y="1066" class="t-muted" font-size="8">security</text>
+          </g>
+          <g data-legend-semantic-kind="dashed" data-legend-x="340" data-legend-baseline="1066" data-legend-width="98">
+            <path d="M 340 1063 L 374 1063" class="a-dashed" stroke-width="1.4" marker-end="url(#arrowhead-dashed)"/>
+            <text x="383" y="1066" class="t-muted" font-size="8">async trace</text>
+          </g>
+          <g data-legend-semantic-kind="default" data-legend-x="460" data-legend-baseline="1066" data-legend-width="118">
+            <path d="M 460 1063 L 494 1063" class="a-default" stroke-width="1.4" marker-end="url(#arrowhead)"/>
+            <text x="503" y="1066" class="t-muted" font-size="8">default message</text>
+          </g>
+        </g>
+      </svg>

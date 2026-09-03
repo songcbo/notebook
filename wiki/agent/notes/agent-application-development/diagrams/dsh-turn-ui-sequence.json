@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "diagram_type": "sequence",
+  "meta": {
+    "title": "DSH：事件日志如何同时驱动 Agent 和前端",
+    "subtitle": "Profile 只是入口；Session append-only log 才是事实，Projection 和 Mux 负责让人看懂",
+    "output": "dsh-turn-ui-sequence.html",
+    "visual_preset": "blueprint",
+    "quality_profile": "showcase",
+    "views": [
+      { "id": "event-first", "label": "事件优先", "focus": ["user", "web", "profile", "loop", "session", "projection"], "note": "先追加事件，再从事件折叠出模型和 UI。" },
+      { "id": "tool-approval", "label": "工具与审批", "focus": ["loop", "tools", "session", "web"], "note": "工具调用、审批和结果都是 Session 事件。" },
+      { "id": "resync", "label": "重连恢复", "focus": ["web", "mux", "session", "projection"], "note": "按 lastSeq 补齐，不靠浏览器猜测缺了什么。" }
+    ],
+    "viewBox": [1400, 1120]
+  },
+  "participants": [
+    { "id": "user", "type": "external", "label": "User", "sublabel": "说一句话" },
+    { "id": "web", "type": "frontend", "label": "Web UI", "sublabel": "Session client" },
+    { "id": "profile", "type": "backend", "label": "Profile", "sublabel": "CLI / Web / SDK" },
+    { "id": "loop", "type": "backend", "label": "Agent Loop", "sublabel": "Cordis Context" },
+    { "id": "session", "type": "database", "label": "Session Log", "sublabel": "append-only events" },
+    { "id": "projection", "type": "backend", "label": "Projection", "sublabel": "history + LLM view" },
+    { "id": "tools", "type": "cloud", "label": "Tools", "sublabel": "FS / Shell / MCP" },
+    { "id": "mux", "type": "messagebus", "label": "Mux", "sublabel": "event + host frames" }
+  ],
+  "activations": [
+    { "participant": "web", "from": 180, "to": 1010, "type": "frontend" },
+    { "participant": "loop", "from": 300, "to": 900, "type": "backend" },
+    { "participant": "session", "from": 360, "to": 980, "type": "database" },
+    { "participant": "projection", "from": 430, "to": 820, "type": "backend" },
+    { "participant": "mux", "from": 610, "to": 1050, "type": "messagebus" }
+  ],
+  "messages": [
+    { "id": "send", "from": "user", "to": "web", "y": 190, "label": "① 输入消息", "variant": "emphasis" },
+    { "id": "command", "from": "web", "to": "profile", "y": 250, "label": "② Profile command / SDK request", "variant": "default" },
+    { "id": "context", "from": "profile", "to": "loop", "y": 310, "label": "③ 装配 Cordis Context", "variant": "emphasis" },
+    { "id": "turn-start", "from": "loop", "to": "session", "y": 370, "label": "④ append turn/start + user/message", "variant": "emphasis", "note": "事件先落日志，才算这一步发生。" },
+    { "id": "fold", "from": "session", "to": "projection", "y": 430, "label": "⑤ fold revision → projection", "variant": "default" },
+    { "id": "llm-view", "from": "projection", "to": "loop", "y": 490, "label": "⑥ 生成模型可见消息", "variant": "return" },
+    { "id": "tool-call", "from": "loop", "to": "tools", "y": 550, "label": "⑦ Tool Provider / MCP", "variant": "default" },
+    { "id": "tool-event", "from": "tools", "to": "session", "y": 610, "label": "⑧ append tool/call + tool/result", "variant": "emphasis" },
+    { "id": "mux-event", "from": "session", "to": "mux", "y": 670, "label": "⑨ session/event + revision", "variant": "default" },
+    { "id": "ui-event", "from": "mux", "to": "web", "y": 730, "label": "⑩ UI projection 更新", "variant": "return" },
+    { "id": "approval", "from": "loop", "to": "session", "y": 790, "label": "⑪ request/header：等待审批", "variant": "security" },
+    { "id": "answer", "from": "web", "to": "mux", "y": 850, "label": "⑫ approval response / cancel", "variant": "security" },
+    { "id": "end", "from": "loop", "to": "session", "y": 910, "label": "⑬ append turn/end", "variant": "emphasis" },
+    { "id": "resync", "from": "web", "to": "mux", "y": 970, "label": "⑭ 重连：subscribe + lastSeq", "variant": "dashed", "note": "从 Session log 补缺，再继续 live tail。" }
+  ],
+  "cards": [
+    { "dot": "cyan", "title": "一个事实源", "items": ["Session append-only log 记录发生过什么", "Projection 负责把事件变成历史和模型消息", "Mux 只是把变化送到 UI，不是第二份数据库"] },
+    { "dot": "amber", "title": "插件带来的能力", "items": ["Profile 决定加载哪些服务", "Tools、Approval、Sandbox 都是 Provider", "不同入口可以共享同一套 Agent Loop"] },
+    { "dot": "rose", "title": "恢复很直观", "items": ["浏览器告诉服务端自己看到的 lastSeq", "服务端按 revision 补齐缺失事件", "未知或乱序事件触发 invariant，而不是静默忽略"] }
+  ]
+}

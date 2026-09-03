@@ -1,0 +1,46 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "DeepSeek Harness 整体架构",
+    "subtitle": "Cordis 驱动的插件树、可替换服务与持久 Session Event Log",
+    "output": "dsh-architecture.html",
+    "animation": "none",
+    "visual_preset": "editorial",
+    "quality_profile": "showcase",
+    "viewBox": [1280, 760],
+    "views": [
+      { "id": "composition", "label": "组合路径", "focus": ["profile", "cordis", "loop"], "note": "Profile 与 Bundle 生成插件树，Cordis Context 注入 Agent Loop 所需服务。" },
+      { "id": "agent-turn", "label": "Agent Turn", "focus": ["session", "loop", "llm", "tools", "approval", "sandbox"], "note": "模型循环读取 Session，调用工具并经过 Guard、Approval 与执行环境。" },
+      { "id": "entrypoints", "label": "入口与协议", "focus": ["client", "cordis", "session"], "note": "Web、Headless Bundle 与 JSON-RPC SDK 都只是可组合入口。" }
+    ]
+  },
+  "components": [
+    { "id": "client", "type": "frontend", "label": "Client / SDK", "sublabel": "React · Headless · JSON-RPC", "pos": [50, 270], "size": [170, 70] },
+    { "id": "profile", "type": "cloud", "label": "Profile & Bundle", "sublabel": "Patch · Overlay · Plugin Tree", "pos": [280, 90], "size": [180, 70] },
+    { "id": "cordis", "type": "backend", "label": "Cordis Context", "sublabel": "Service · Event · Effect · Scope", "pos": [280, 270], "size": [180, 70], "tag": "Plugin runtime" },
+    { "id": "session", "type": "database", "label": "Session Event Log", "sublabel": "Append-only · replayable", "pos": [280, 490], "size": [180, 70], "tag": "JSONL / SQLite" },
+    { "id": "loop", "type": "backend", "label": "Agent Loop", "sublabel": "Context build · step · inbox", "pos": [530, 270], "size": [180, 70], "tag": "Replaceable service" },
+    { "id": "llm", "type": "external", "label": "LLM Provider", "sublabel": "Model adapter", "pos": [780, 90], "size": [170, 70] },
+    { "id": "tools", "type": "backend", "label": "Tool Service", "sublabel": "Registry · waterfall · guards", "pos": [780, 270], "size": [170, 70] },
+    { "id": "approval", "type": "security", "label": "Approval Service", "sublabel": "Policy · request · decision", "pos": [780, 490], "size": [170, 70] },
+    { "id": "sandbox", "type": "cloud", "label": "Capability Providers", "sublabel": "FS · Shell · Process · E2B", "pos": [1030, 270], "size": [180, 70] }
+  ],
+  "boundaries": [
+    { "kind": "region", "label": "Cordis plugin realm", "wraps": ["profile", "cordis", "session", "loop", "llm", "tools", "approval", "sandbox"], "pad": 26 }
+  ],
+  "connections": [
+    { "id": "client-cordis", "from": "client", "to": "cordis", "label": "run / stream", "variant": "emphasis", "labelAt": [250, 250] },
+    { "id": "profile-cordis", "from": "profile", "to": "cordis", "label": "compose", "fromSide": "bottom", "toSide": "top", "labelAt": [370, 215] },
+    { "id": "cordis-loop", "from": "cordis", "to": "loop", "label": "ctx.agentLoop", "variant": "emphasis", "labelAt": [500, 250] },
+    { "id": "session-loop", "from": "session", "to": "loop", "label": "history / append", "fromSide": "top", "toSide": "bottom", "via": [[370, 410], [620, 410]], "labelAt": [500, 390] },
+    { "id": "loop-llm", "from": "loop", "to": "llm", "label": "model step", "fromSide": "top", "toSide": "bottom", "via": [[620, 210], [865, 210]], "labelAt": [740, 190] },
+    { "id": "loop-tools", "from": "loop", "to": "tools", "label": "Tool Call", "variant": "emphasis", "labelAt": [750, 250] },
+    { "id": "tools-approval", "from": "tools", "to": "approval", "label": "guard / request", "variant": "security", "fromSide": "bottom", "toSide": "top", "labelAt": [865, 420] },
+    { "id": "tools-sandbox", "from": "tools", "to": "sandbox", "label": "execute", "labelAt": [1000, 250] }
+  ],
+  "cards": [
+    { "dot": "emerald", "title": "核心思路", "items": ["没有特权大对象：Agent Loop 也只是插件", "Context 同时承载服务、事件、作用域与可逆副作用", "模型可见事实必须进入 Session Event Log"] },
+    { "dot": "amber", "title": "代价", "items": ["配置树与生命周期更复杂", "阅读调用链时必须同时追踪 Service 和 Event", "当前仍处于 developer preview"] }
+  ]
+}

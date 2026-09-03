@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "diagram_type": "dataflow",
+  "meta": {
+    "title": "Skill 从哪里来，最后在哪里被使用",
+    "subtitle": "把发现、授权、Runner 缓存、Sandbox 文件和模型可见目录分开",
+    "output": "skill-materialization.html",
+    "visual_preset": "blueprint",
+    "quality_profile": "showcase",
+    "views": [
+      { "id": "discovery", "label": "发现与授权", "focus": ["repo", "upload", "discover", "authorize", "catalog"], "note": "先确定用户和 Agent 有权使用哪些 Skill。" },
+      { "id": "runtime", "label": "运行时落点", "focus": ["bundle", "sandbox"], "note": "不同项目可能把 Skill 放在 Runner，也可能投影进 Sandbox。" },
+      { "id": "model-use", "label": "模型如何读取", "focus": ["prompt", "model"], "note": "目录索引可以常驻，正文和资源通常按需读取。" }
+    ],
+    "viewBox": [1240, 880]
+  },
+  "stages": [
+    { "label": "来源" },
+    { "label": "发现 / 授权" },
+    { "label": "打包 / 投影" },
+    { "label": "运行时" },
+    { "label": "模型使用" }
+  ],
+  "nodes": [
+    { "id": "repo", "type": "cloud", "label": "Skill 仓库", "sublabel": "版本 + 文件", "stage": 0, "row": 0, "tag": "QM / AI Manus" },
+    { "id": "upload", "type": "frontend", "label": "用户上传", "sublabel": "创建或更新", "stage": 0, "row": 2, "tag": "AI Manus" },
+    { "id": "discover", "type": "backend", "label": "发现器", "sublabel": "扫描可见目录", "stage": 1, "row": 0 },
+    { "id": "authorize", "type": "security", "label": "授权策略", "sublabel": "用户 / Team / Agent", "stage": 1, "row": 2 },
+    { "id": "catalog", "type": "messagebus", "label": "Skill 目录", "sublabel": "名称 + 描述", "stage": 2, "row": 0, "tag": "Prompt 可见" },
+    { "id": "bundle", "type": "cloud", "label": "资源包", "sublabel": "插件 / 文件", "stage": 2, "row": 2, "tag": "Omnigent" },
+    { "id": "prompt", "type": "backend", "label": "Prompt 索引", "sublabel": "轻量上下文", "stage": 3, "row": 0 },
+    { "id": "sandbox", "type": "cloud", "label": "Sandbox 文件", "sublabel": "运行时可读", "stage": 3, "row": 2, "tag": "QM / AI Manus" },
+    { "id": "model", "type": "external", "label": "模型", "sublabel": "决定是否使用", "stage": 4, "row": 0 }
+  ],
+  "flows": [
+    { "id": "repo-discover", "from": "repo", "to": "discover", "label": "扫描", "classification": "source", "variant": "default" },
+    { "id": "upload-authorize", "from": "upload", "to": "authorize", "label": "提交变更", "classification": "user input", "variant": "emphasis" },
+    { "id": "discover-catalog", "from": "discover", "to": "catalog", "label": "可见 Skill", "classification": "metadata", "variant": "emphasis" },
+    { "id": "authorize-bundle", "from": "authorize", "to": "bundle", "label": "已授权文件", "classification": "policy", "variant": "security" },
+    { "id": "catalog-prompt", "from": "catalog", "to": "prompt", "label": "目录摘要", "classification": "small context", "variant": "default" },
+    { "id": "prompt-model", "from": "prompt", "to": "model", "label": "目录进入上下文", "classification": "prompt", "variant": "emphasis" },
+    { "id": "bundle-sandbox", "from": "bundle", "to": "sandbox", "label": "Runner 缓存 / 可选投影", "classification": "runtime files", "variant": "dashed", "labelDy": 60 }
+  ],
+  "cards": [
+    { "dot": "cyan", "title": "先有目录，再读正文", "items": ["模型先看到名称和描述，不必把全部 SKILL.md 塞进上下文", "正文和附件通常由 load_skill / read_skill_file 按需读取"] },
+    { "dot": "amber", "title": "Runner 和 Sandbox 不是一回事", "items": ["Omnigent 的 Skill 主要在 Runner 缓存或插件目录", "QM / AI Manus 更强调把文件投影到运行时 Sandbox", "是否复制取决于执行位置和文件访问边界"] },
+    { "dot": "rose", "title": "授权先于物化", "items": ["仓库里存在不等于当前 Agent 有权使用", "授权、版本和路径都应在运行前确定", "路径必须限制在允许的根目录内"] }
+  ]
+}

@@ -1,0 +1,77 @@
+{
+  "schema_version": 1,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "Context 构造与工具治理链路",
+    "subtitle": "模型输入负责决定“看见什么”，工具链负责约束“能够做什么”",
+    "output": "module-context-tool-governance.html",
+    "animation": "none",
+    "visual_preset": "signal-flow",
+    "quality_profile": "showcase",
+    "views": [
+      {
+        "id": "context-path",
+        "label": "Context 构造",
+        "focus": ["context_sources", "context_assembly", "model_request"],
+        "note": "Prompt、历史、Memory 与 Skills 在模型请求前组合。"
+      },
+      {
+        "id": "tool-path",
+        "label": "工具执行",
+        "focus": ["model_request", "tool_call", "validate_call", "policy_gate", "tool_execute"],
+        "note": "工具调用先校验、再做权限判断，最后才进入副作用执行。"
+      },
+      {
+        "id": "approval-path",
+        "label": "审批与审计",
+        "focus": ["policy_gate", "approval_wait", "tool_execute"],
+        "note": "Ask 决策暂停原执行，恢复后仍执行原调用并留下审计证据。"
+      }
+    ],
+    "viewBox": [1180, 780]
+  },
+  "lanes": [
+    { "id": "context", "label": "Context 与 Prompt" },
+    { "id": "model", "label": "模型输出" },
+    { "id": "governance", "label": "工具治理" },
+    { "id": "execution", "label": "副作用与证据" }
+  ],
+  "phases": [
+    { "id": "prepare", "label": "组装模型输入", "fromCol": 0, "toCol": 2 },
+    { "id": "govern", "label": "解析与决策", "fromCol": 3, "toCol": 4, "variant": "emphasis" },
+    { "id": "execute", "label": "执行与记录", "fromCol": 5, "toCol": 5, "variant": "dashed" }
+  ],
+  "mainPath": ["context_sources", "context_assembly", "model_request", "tool_call", "validate_call", "policy_gate", "tool_execute"],
+  "nodes": [
+    { "id": "context_sources", "lane": "context", "col": 0, "type": "database", "label": "上下文来源", "sublabel": "History / Memory" },
+    { "id": "context_assembly", "lane": "context", "col": 1, "type": "backend", "label": "Context 构造", "sublabel": "Prompt、裁剪与压缩" },
+    { "id": "model_request", "lane": "model", "col": 2, "type": "backend", "label": "模型请求", "sublabel": "可见历史与工具 Schema" },
+    { "id": "tool_call", "lane": "model", "col": 3, "type": "messagebus", "label": "Tool Call", "sublabel": "名称、参数与调用标识" },
+    { "id": "validate_call", "lane": "governance", "col": 4, "type": "backend", "label": "校验与解析", "sublabel": "Schema / Tool Registry" },
+    { "id": "policy_gate", "lane": "governance", "col": 5, "type": "security", "label": "Policy Gate", "sublabel": "Allow / Ask / Deny" },
+    { "id": "approval_wait", "lane": "execution", "col": 4, "type": "security", "label": "等待审批", "sublabel": "保留原调用上下文" },
+    { "id": "tool_execute", "lane": "execution", "col": 5, "type": "cloud", "label": "工具执行", "sublabel": "Sandbox / External API" }
+  ],
+  "edges": [
+    { "id": "sources_to_assembly", "from": "context_sources", "to": "context_assembly", "variant": "emphasis" },
+    { "id": "assembly_to_model", "from": "context_assembly", "to": "model_request", "fromSide": "bottom", "toSide": "top", "channelY": 181, "variant": "emphasis" },
+    { "id": "model_to_call", "from": "model_request", "to": "tool_call" },
+    { "id": "call_to_validate", "from": "tool_call", "to": "validate_call" },
+    { "id": "validate_to_policy", "from": "validate_call", "to": "policy_gate", "route": "straight", "variant": "security" },
+    { "id": "policy_to_execute", "from": "policy_gate", "to": "tool_execute", "route": "drop", "variant": "emphasis" },
+    { "id": "policy_to_wait", "from": "policy_gate", "to": "approval_wait", "variant": "security" },
+    { "id": "wait_to_execute", "from": "approval_wait", "to": "tool_execute", "route": "straight", "variant": "emphasis" }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "两条不同责任线",
+      "items": ["Context 决定模型能看到什么", "Policy 决定工具调用是否允许", "Approval 是 Ask 决策的人工恢复点"]
+    },
+    {
+      "dot": "amber",
+      "title": "恢复约束",
+      "items": ["审批前保存原 Tool Call", "恢复后不重新让模型猜测参数", "工具结果与决策都应可追踪"]
+    }
+  ]
+}

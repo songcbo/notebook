@@ -1,0 +1,84 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "四个 Agent 项目的职责映射",
+    "subtitle": "同一阅读模型下，控制、运行与状态边界由谁拥有",
+    "output": "cross-project-architecture.html",
+    "animation": "none",
+    "visual_preset": "editorial",
+    "quality_profile": "showcase",
+    "viewBox": [1280, 760],
+    "views": [
+      {
+        "id": "qm-path",
+        "label": "QM 主路径",
+        "focus": ["qm-core", "qm-runtime", "qm-state"],
+        "note": "Scope-first Core 统一应用语义，再通过 Harness 接入不同 Runtime。"
+      },
+      {
+        "id": "omnigent-path",
+        "label": "Omnigent 主路径",
+        "focus": ["omni-control", "omni-runtime", "omni-state"],
+        "note": "Server 控制面与 Host、Runner、Harness 执行面分离。"
+      },
+      {
+        "id": "dsh-path",
+        "label": "DSH 主路径",
+        "focus": ["dsh-compose", "dsh-runtime", "dsh-state"],
+        "note": "Cordis Context 用插件、服务与事件组合 Agent Harness。"
+      },
+      {
+        "id": "manus-path",
+        "label": "AI Manus 主路径",
+        "focus": ["manus-app", "manus-runtime", "manus-state"],
+        "note": "Application 编排 Session，Native Harness 与 FlowRuntime 在共享后端运行。"
+      }
+    ],
+    "legend": {
+      "mode": "auto",
+      "entries": {
+        "backend": { "label": "控制与运行组件" },
+        "cloud": { "label": "执行环境" },
+        "database": { "label": "状态与事实源" }
+      }
+    }
+  },
+  "components": [
+    { "id": "qm-core", "type": "backend", "label": "QM Core", "sublabel": "Scope · Session · Turn · Policy", "pos": [70, 120], "size": [230, 74], "tag": "Fastify + TypeScript" },
+    { "id": "qm-runtime", "type": "backend", "label": "Harness Router", "sublabel": "Codex / Claude / Pi / OpenCode", "pos": [70, 310], "size": [230, 74], "tag": "Runtime Adapter" },
+    { "id": "qm-state", "type": "database", "label": "Durable Scope", "sublabel": "PostgreSQL · Bytes · Sandbox", "pos": [70, 500], "size": [230, 74] },
+
+    { "id": "omni-control", "type": "backend", "label": "Omnigent Server", "sublabel": "Session · Policy · Routing", "pos": [370, 120], "size": [230, 74], "tag": "FastAPI" },
+    { "id": "omni-runtime", "type": "backend", "label": "Host · Runner · Harness", "sublabel": "Per-conversation process", "pos": [370, 310], "size": [230, 74], "tag": "HTTP/SSE over UDS" },
+    { "id": "omni-state", "type": "database", "label": "Platform State", "sublabel": "SQL DB · Artifact Store", "pos": [370, 500], "size": [230, 74] },
+
+    { "id": "dsh-compose", "type": "backend", "label": "Cordis Context", "sublabel": "Profile · Bundle · Plugin Tree", "pos": [670, 120], "size": [230, 74], "tag": "Service + Event + Effect" },
+    { "id": "dsh-runtime", "type": "backend", "label": "Agent Loop", "sublabel": "LLM · Tools · Approval · Sandbox", "pos": [670, 310], "size": [230, 74], "tag": "Everything is a plugin" },
+    { "id": "dsh-state", "type": "database", "label": "Session Event Log", "sublabel": "Append-only · JSONL / SQLite", "pos": [670, 500], "size": [230, 74] },
+
+    { "id": "manus-app", "type": "backend", "label": "AI Manus Application", "sublabel": "Task · Session · Orchestration", "pos": [970, 120], "size": [230, 74], "tag": "FastAPI + Python" },
+    { "id": "manus-runtime", "type": "backend", "label": "Native Harness", "sublabel": "FlowRuntime · AgentBase · Tools", "pos": [970, 310], "size": [230, 74], "tag": "In-process" },
+    { "id": "manus-state", "type": "database", "label": "Session Infrastructure", "sublabel": "PostgreSQL · Redis · MinIO · Docker", "pos": [970, 500], "size": [230, 74] }
+  ],
+  "boundaries": [
+    { "kind": "region", "label": "QM · 完整应用核心", "wraps": ["qm-core", "qm-runtime", "qm-state"], "pad": 24 },
+    { "kind": "region", "label": "Omnigent · Meta-Harness 平台", "wraps": ["omni-control", "omni-runtime", "omni-state"], "pad": 24 },
+    { "kind": "region", "label": "DSH · 可组合 Harness", "wraps": ["dsh-compose", "dsh-runtime", "dsh-state"], "pad": 24 },
+    { "kind": "region", "label": "AI Manus · 当前自有项目", "wraps": ["manus-app", "manus-runtime", "manus-state"], "pad": 24 }
+  ],
+  "connections": [
+    { "id": "qm-control-runtime", "from": "qm-core", "to": "qm-runtime", "label": "统一 Turn 输入", "variant": "emphasis", "fromSide": "bottom", "toSide": "top", "labelAt": [185, 248] },
+    { "id": "qm-runtime-state", "from": "qm-runtime", "to": "qm-state", "label": "工具执行 / 持久化", "fromSide": "bottom", "toSide": "top", "labelAt": [185, 438] },
+    { "id": "omni-control-runtime", "from": "omni-control", "to": "omni-runtime", "label": "路由与策略", "variant": "emphasis", "fromSide": "bottom", "toSide": "top", "labelAt": [485, 248] },
+    { "id": "omni-runtime-state", "from": "omni-runtime", "to": "omni-state", "label": "事件与制品", "fromSide": "bottom", "toSide": "top", "labelAt": [485, 438] },
+    { "id": "dsh-compose-runtime", "from": "dsh-compose", "to": "dsh-runtime", "label": "注入服务与作用域", "variant": "emphasis", "fromSide": "bottom", "toSide": "top", "labelAt": [785, 248] },
+    { "id": "dsh-runtime-state", "from": "dsh-runtime", "to": "dsh-state", "label": "记录模型可见事实", "fromSide": "bottom", "toSide": "top", "labelAt": [785, 438] },
+    { "id": "manus-app-runtime", "from": "manus-app", "to": "manus-runtime", "label": "Task / Mailbox", "variant": "emphasis", "fromSide": "bottom", "toSide": "top", "labelAt": [1085, 248] },
+    { "id": "manus-runtime-state", "from": "manus-runtime", "to": "manus-state", "label": "事件 / 消息 / 工具", "fromSide": "bottom", "toSide": "top", "labelAt": [1085, 438] }
+  ],
+  "cards": [
+    { "dot": "cyan", "title": "比较口径", "items": ["上：应用控制或组合入口", "中：Harness / Runtime", "下：执行环境与状态"] },
+    { "dot": "violet", "title": "关键差异", "items": ["QM、Omnigent 更强调外层应用语义", "DSH 更强调同进程能力组合", "AI Manus 当前把多 Agent 与 Native Harness 放在共享后端"] }
+  ]
+}

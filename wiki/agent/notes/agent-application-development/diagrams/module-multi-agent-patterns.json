@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "四个项目中的多 Agent 与协作模式",
+    "subtitle": "同一个名称背后分别是多人 Scope、Conversation Tree、Subagent Seam 与 Flow Mailbox",
+    "output": "module-multi-agent-patterns.html",
+    "animation": "none",
+    "visual_preset": "editorial",
+    "quality_profile": "showcase",
+    "views": [
+      {
+        "id": "project-patterns",
+        "label": "四种项目模式",
+        "focus": ["qm_pattern", "omnigent_pattern", "dsh_pattern", "ai_manus_pattern"],
+        "note": "先看清每个项目所说的“多 Agent”到底是什么。"
+      },
+      {
+        "id": "shared-questions",
+        "label": "共同分析问题",
+        "focus": ["comparison_center", "identity_owner", "message_route", "lifecycle_owner", "result_merge"],
+        "note": "无论实现名称如何变化，都要回答身份、路由、生命周期和结果回收。"
+      }
+    ],
+    "viewBox": [1220, 740]
+  },
+  "layout": {
+    "mode": "grid",
+    "origin": [54, 86],
+    "cols": 5,
+    "gapX": 54,
+    "gapY": 70,
+    "cellW": 178,
+    "cellH": 92
+  },
+  "components": [
+    { "id": "qm_pattern", "type": "backend", "label": "QM", "sublabel": "多人 + Scope 协作", "tag": "共享 Agent Core", "row": 0, "col": 0 },
+    { "id": "omnigent_pattern", "type": "cloud", "label": "Omnigent", "sublabel": "父子 Conversation", "tag": "跨 Harness 协作", "row": 0, "col": 1 },
+    { "id": "dsh_pattern", "type": "messagebus", "label": "DSH", "sublabel": "Subagent Provider Seam", "tag": "continuable child", "row": 0, "col": 3 },
+    { "id": "ai_manus_pattern", "type": "backend", "label": "AI Manus", "sublabel": "FlowRuntime + Mailbox", "tag": "显式编排", "row": 0, "col": 4 },
+    { "id": "comparison_center", "type": "external", "label": "共同分析维度", "sublabel": "不机械寻找同名模块", "row": 1, "col": 2 },
+    { "id": "identity_owner", "type": "security", "label": "身份与所有权", "sublabel": "谁创建、谁可见、谁可停止", "row": 2, "col": 0 },
+    { "id": "message_route", "type": "messagebus", "label": "消息路由", "sublabel": "目标、隔离、背压与重放", "row": 2, "col": 1 },
+    { "id": "lifecycle_owner", "type": "backend", "label": "生命周期", "sublabel": "启动、等待、恢复与清理", "row": 2, "col": 3 },
+    { "id": "result_merge", "type": "database", "label": "结果与状态回收", "sublabel": "汇报、事件、历史与派生状态", "row": 2, "col": 4 }
+  ],
+  "connections": [
+    { "id": "qm_compare", "from": "qm_pattern", "to": "comparison_center", "variant": "dashed" },
+    { "id": "omn_compare", "from": "omnigent_pattern", "to": "comparison_center", "variant": "dashed" },
+    { "id": "dsh_compare", "from": "dsh_pattern", "to": "comparison_center", "variant": "dashed" },
+    { "id": "aim_compare", "from": "ai_manus_pattern", "to": "comparison_center", "variant": "dashed" },
+    { "id": "compare_identity", "from": "comparison_center", "to": "identity_owner", "variant": "security" },
+    { "id": "compare_route", "from": "comparison_center", "to": "message_route", "variant": "emphasis" },
+    { "id": "compare_lifecycle", "from": "comparison_center", "to": "lifecycle_owner", "variant": "emphasis" },
+    { "id": "compare_result", "from": "comparison_center", "to": "result_merge" }
+  ],
+  "cards": [
+    {
+      "dot": "violet",
+      "title": "定位差异",
+      "items": ["QM 首先解决多人共享 Agent", "Omnigent 管理父子会话和多 Harness", "DSH 抽象可替换的子代理 Provider", "AI Manus 在一个 Flow 中显式调度多个 Agent"]
+    },
+    {
+      "dot": "emerald",
+      "title": "比较重点",
+      "items": ["不要只比较 spawn API", "重点观察消息如何隔离和恢复", "结果回传必须落到可追踪的会话事实"]
+    }
+  ]
+}

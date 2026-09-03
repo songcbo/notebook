@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "diagram_type": "sequence",
+  "meta": {
+    "title": "Omnigent：Server、Host、Runner 如何协作完成一次消息",
+    "subtitle": "Conversation 是事实；前端的本地 streaming 状态和服务端 sessionStatus 分开",
+    "output": "omnigent-turn-ui-sequence.html",
+    "visual_preset": "signal-flow",
+    "quality_profile": "showcase",
+    "views": [
+      { "id": "normal", "label": "正常消息", "focus": ["user", "web", "server", "conv", "host", "runner", "harness"], "note": "看消息从浏览器穿过 Host 隧道到 Harness。" },
+      { "id": "status", "label": "状态与后台任务", "focus": ["server", "stream", "web", "runner", "conv"], "note": "服务端 running / waiting 与前端 local streaming 不同。" },
+      { "id": "reconnect", "label": "快照恢复", "focus": ["web", "stream", "conv"], "note": "先 bind，再用 snapshot + live tail 补齐。" }
+    ],
+    "viewBox": [1420, 1160]
+  },
+  "participants": [
+    { "id": "user", "type": "external", "label": "User", "sublabel": "浏览器用户" },
+    { "id": "web", "type": "frontend", "label": "Web", "sublabel": "Zustand chatStore" },
+    { "id": "server", "type": "backend", "label": "Server", "sublabel": "FastAPI 控制面" },
+    { "id": "conv", "type": "database", "label": "Conversation", "sublabel": "items + status" },
+    { "id": "host", "type": "backend", "label": "Host", "sublabel": "WebSocket 隧道" },
+    { "id": "runner", "type": "backend", "label": "Runner", "sublabel": "路由 + 资源" },
+    { "id": "harness", "type": "cloud", "label": "Harness", "sublabel": "CLI / SDK / Native" },
+    { "id": "stream", "type": "messagebus", "label": "SessionStream", "sublabel": "snapshot + live tail" }
+  ],
+  "activations": [
+    { "participant": "web", "from": 180, "to": 1050, "type": "frontend" },
+    { "participant": "server", "from": 240, "to": 990, "type": "backend" },
+    { "participant": "host", "from": 350, "to": 620, "type": "backend" },
+    { "participant": "runner", "from": 410, "to": 870, "type": "backend" },
+    { "participant": "stream", "from": 510, "to": 1050, "type": "messagebus" }
+  ],
+  "messages": [
+    { "id": "send", "from": "user", "to": "web", "y": 190, "label": "① 输入消息", "variant": "emphasis" },
+    { "id": "post", "from": "web", "to": "server", "y": 250, "label": "② POST /events", "variant": "default", "note": "先绑定 SessionStream，避免发送后错过事件。" },
+    { "id": "persist", "from": "server", "to": "conv", "y": 330, "label": "③ 写 ConversationItem", "variant": "emphasis" },
+    { "id": "route", "from": "server", "to": "host", "y": 390, "label": "④ 通过 Host WebSocket 路由", "variant": "default" },
+    { "id": "ensure", "from": "host", "to": "runner", "y": 450, "label": "⑤ ensure Runner / process", "variant": "default" },
+    { "id": "turn", "from": "runner", "to": "harness", "y": 510, "label": "⑥ Harness turn", "variant": "emphasis" },
+    { "id": "item", "from": "harness", "to": "conv", "y": 570, "label": "⑦ message / tool / reasoning item", "variant": "emphasis" },
+    { "id": "publish", "from": "conv", "to": "stream", "y": 630, "label": "⑧ publish live item", "variant": "default" },
+    { "id": "render", "from": "stream", "to": "web", "y": 690, "label": "⑨ UI 增量渲染", "variant": "return" },
+    { "id": "status", "from": "server", "to": "stream", "y": 750, "label": "⑩ running / waiting", "variant": "default" },
+    { "id": "approval", "from": "web", "to": "server", "y": 810, "label": "⑪ approval / stop / queue", "variant": "security" },
+    { "id": "control", "from": "server", "to": "runner", "y": 870, "label": "⑫ interrupt 或 resume", "variant": "security" },
+    { "id": "done", "from": "runner", "to": "server", "y": 930, "label": "⑬ 完成；后台任务可继续", "variant": "return" },
+    { "id": "reconnect", "from": "web", "to": "stream", "y": 1010, "label": "⑭ 断线：snapshot + live tail", "variant": "dashed", "note": "事件按 item id 去重；队列溢出则重新同步。" }
+  ],
+  "cards": [
+    { "dot": "cyan", "title": "两个状态，不混成一个", "items": ["server sessionStatus：idle / running / waiting / failed", "chatStore local status：idle / streaming", "waiting 可能表示 Turn 已结束，但 Shell / Subagent 仍在工作"] },
+    { "dot": "amber", "title": "三条通信通道", "items": ["HTTP：发送命令和读取快照", "Session SSE：单个 Conversation 的事件", "用户级 WebSocket：Session 列表和后台变化"] },
+    { "dot": "rose", "title": "Runner 是执行边界", "items": ["Skill 资源和 Harness 进程必须让 Runner 能访问", "不需要把每个 Skill 都复制到运行 Workspace", "Host、Runner、Server 重启后的所有权要单独恢复"] }
+  ]
+}

@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Omnigent 整体架构",
+    "subtitle": "Server 控制面、Host/Runner 执行面与 Per-conversation Harness",
+    "output": "omnigent-architecture.html",
+    "animation": "none",
+    "visual_preset": "blueprint",
+    "quality_profile": "showcase",
+    "viewBox": [1400, 760],
+    "views": [
+      { "id": "request-path", "label": "消息主路径", "focus": ["client", "server", "host", "runner", "harness", "runtime"], "note": "控制请求经 Tunnel 到 Runner，再进入会话独立 Harness 与具体 Runtime。" },
+      { "id": "process-boundary", "label": "进程边界", "focus": ["runner", "harness", "runtime", "sandbox"], "note": "Runner 管理执行，Harness 按 Conversation 作为子进程隔离。" },
+      { "id": "state-path", "label": "状态路径", "focus": ["server", "db", "artifact", "runner"], "note": "数据库与 Artifact Store 是持久事实，实时队列和 Registry 属于运行态。" }
+    ]
+  },
+  "components": [
+    { "id": "client", "type": "frontend", "label": "Client", "sublabel": "React Web / API Client", "pos": [40, 270], "size": [150, 70] },
+    { "id": "server", "type": "backend", "label": "Server", "sublabel": "FastAPI Control Plane", "pos": [240, 270], "size": [170, 70], "tag": "Session · Policy · Routing" },
+    { "id": "host", "type": "backend", "label": "Host", "sublabel": "Machine daemon", "pos": [460, 270], "size": [150, 70], "tag": "WebSocket tunnel" },
+    { "id": "runner", "type": "backend", "label": "Runner", "sublabel": "Session execution coordinator", "pos": [660, 270], "size": [180, 70] },
+    { "id": "harness", "type": "backend", "label": "Harness Process", "sublabel": "FastAPI scaffold per conversation", "pos": [890, 270], "size": [190, 70], "tag": "HTTP/SSE over UDS" },
+    { "id": "runtime", "type": "external", "label": "Agent Runtime", "sublabel": "Codex · Claude · ACP · CLI", "pos": [1130, 270], "size": [190, 70] },
+    { "id": "db", "type": "database", "label": "SQL Database", "sublabel": "Conversation · Item · Host · Policy", "pos": [240, 480], "size": [170, 70] },
+    { "id": "artifact", "type": "database", "label": "Artifact Store", "sublabel": "Local / S3-compatible", "pos": [460, 480], "size": [150, 70] },
+    { "id": "policy", "type": "security", "label": "Tools & Policy", "sublabel": "MCP · Approval · Elicitation", "pos": [660, 480], "size": [180, 70] },
+    { "id": "sandbox", "type": "cloud", "label": "Execution Sandbox", "sublabel": "Host OS / Managed Provider", "pos": [890, 480], "size": [190, 70] }
+  ],
+  "boundaries": [
+    { "kind": "region", "label": "Shared control plane", "wraps": ["server", "db", "artifact"], "pad": 24 },
+    { "kind": "region", "label": "Execution plane", "wraps": ["host", "runner", "harness", "runtime", "policy", "sandbox"], "pad": 24 }
+  ],
+  "connections": [
+    { "id": "client-server", "from": "client", "to": "server", "label": "REST / SSE", "variant": "emphasis", "labelAt": [215, 250] },
+    { "id": "server-host", "from": "server", "to": "host", "label": "route over tunnel", "variant": "emphasis", "labelAt": [435, 250] },
+    { "id": "host-runner", "from": "host", "to": "runner", "label": "spawn / control", "variant": "emphasis", "labelAt": [635, 250] },
+    { "id": "runner-harness", "from": "runner", "to": "harness", "label": "Session Event API", "variant": "emphasis", "labelAt": [865, 250] },
+    { "id": "harness-runtime", "from": "harness", "to": "runtime", "label": "SDK / JSON-RPC", "variant": "emphasis", "labelAt": [1105, 250] },
+    { "id": "server-db", "from": "server", "to": "db", "fromSide": "bottom", "toSide": "top" },
+    { "id": "server-artifact", "from": "server", "to": "artifact", "fromSide": "bottom", "toSide": "top", "route": "orthogonal-v" },
+    { "id": "runner-policy", "from": "runner", "to": "policy", "fromSide": "bottom", "toSide": "top" },
+    { "id": "policy-harness", "from": "policy", "to": "harness", "label": "result / approval", "variant": "security", "fromSide": "top", "toSide": "bottom", "via": [[750, 400], [985, 400]], "labelAt": [875, 380] },
+    { "id": "policy-sandbox", "from": "policy", "to": "sandbox", "label": "execute", "labelAt": [865, 575] }
+  ],
+  "cards": [
+    { "dot": "violet", "title": "边界", "items": ["Server 管平台状态，不直接运行模型循环", "Host 管机器，Runner 管会话执行", "Harness 隔离具体 Runtime 依赖与故障"] },
+    { "dot": "cyan", "title": "实时通信", "items": ["Host/Runner 使用双向 WebSocket Tunnel", "Runner 与 Harness 使用 HTTP/SSE over UDS", "Client 从持久 Snapshot 接续 live tail"] }
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "定时任务：从钟表到一次 Agent 运行",
+    "subtitle": "触发不是执行；要经过校验、排队、运行、交付和历史记录",
+    "output": "scheduler-workflow.html",
+    "visual_preset": "signal-flow",
+    "quality_profile": "showcase",
+    "views": [
+      { "id": "normal", "label": "正常触发", "focus": ["schedule", "clock", "validate", "enqueue", "execute", "record"], "note": "看一次周期任务如何变成普通 Agent 运行。" },
+      { "id": "skips", "label": "跳过与等待", "focus": ["validate", "enqueue"], "note": "重叠或没有执行位置时，不一定是失败。" },
+      { "id": "failure", "label": "失败与下次", "focus": ["execute", "record"], "note": "失败记录要保留，下一次触发仍有明确来源。" }
+    ],
+    "viewBox": [1180, 920]
+  },
+  "lanes": [
+    { "id": "main", "label": "每次触发的主路径" },
+    { "id": "gate", "label": "策略判断" },
+    { "id": "runtime", "label": "Runtime" },
+    { "id": "outcome", "label": "结果记录" }
+  ],
+  "phases": [
+    { "id": "trigger", "label": "触发", "fromCol": 0, "toCol": 1, "variant": "emphasis" },
+    { "id": "admission", "label": "准入", "fromCol": 2, "toCol": 3 },
+    { "id": "run", "label": "执行与记录", "fromCol": 4, "toCol": 5, "variant": "dashed" }
+  ],
+  "groups": [
+    { "id": "policy-group", "label": "先检查再启动", "lane": "gate", "fromCol": 2, "toCol": 3, "variant": "security" },
+    { "id": "runtime-group", "label": "普通 Agent 运行", "lane": "runtime", "fromCol": 4, "toCol": 5, "variant": "dashed" }
+  ],
+  "mainPath": ["schedule", "clock", "validate", "enqueue", "execute", "record"],
+  "nodes": [
+    { "id": "schedule", "lane": "main", "col": 0, "type": "database", "label": "已排程", "sublabel": "cron / RRULE + 时区", "tag": "durable" },
+    { "id": "clock", "lane": "main", "col": 1, "type": "backend", "label": "到点", "sublabel": "时钟叫醒任务" },
+    { "id": "validate", "lane": "gate", "col": 2, "type": "security", "label": "重新校验", "sublabel": "权限 / Host / Workspace", "tag": "gate" },
+    { "id": "enqueue", "lane": "main", "col": 3, "type": "messagebus", "label": "已入队", "sublabel": "Run / Conversation" },
+    { "id": "execute", "lane": "runtime", "col": 4, "type": "backend", "label": "执行中", "sublabel": "普通 Agent Turn" },
+    { "id": "record", "lane": "outcome", "col": 5, "type": "database", "label": "结果记录", "sublabel": "成功 / 失败 / 跳过", "tag": "history" }
+  ],
+  "edges": [
+    { "id": "clock-edge", "from": "schedule", "to": "clock", "variant": "emphasis", "role": "main" },
+    { "id": "check-edge", "from": "clock", "to": "validate", "variant": "default", "role": "main", "route": "bottom-channel", "fromSide": "bottom", "toSide": "bottom", "channelY": 215 },
+    { "id": "admit-edge", "from": "validate", "to": "enqueue", "label": "通过", "variant": "emphasis", "role": "main" },
+    { "id": "start-edge", "from": "enqueue", "to": "execute", "label": "启动 Runtime", "variant": "default", "role": "main" },
+    { "id": "record-edge", "from": "execute", "to": "record", "label": "完成并记录", "variant": "emphasis", "role": "return" }
+  ],
+  "cards": [
+    { "dot": "cyan", "title": "四个简单问题", "items": ["什么时候触发？使用哪个时区？", "触发时还有权限、Host 和 Workspace 吗？", "是否允许和上一轮重叠？", "结果和失败记录放在哪里？"] },
+    { "dot": "amber", "title": "四个项目的选择", "items": ["QM：持久 Cron + Run / Thread", "Omnigent：数据库任务 + 自重置计时器", "DSH：只对存活 Session 追加 follow-up", "AI Manus：当前源码未发现完整 Scheduler"] },
+    { "dot": "rose", "title": "跳过不等于故障", "items": ["重叠、冷 Session、无 Host 可能是明确策略", "失败要留下可查询的 run 状态", "重复触发必须考虑幂等和副作用"] }
+  ]
+}

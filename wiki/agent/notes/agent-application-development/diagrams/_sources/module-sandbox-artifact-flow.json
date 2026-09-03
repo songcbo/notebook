@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "Sandbox、Workspace 与 Artifact 的执行链",
+    "subtitle": "执行隔离、工作目录和产物持久化是三个不同问题，需要通过稳定标识连接",
+    "output": "module-sandbox-artifact-flow.html",
+    "animation": "none",
+    "visual_preset": "signal-flow",
+    "quality_profile": "showcase",
+    "views": [
+      { "id": "execution", "label": "工具执行", "focus": ["resolve_scope", "acquire_sandbox", "mount_workspace", "execute_tool", "capture_result"], "note": "Sandbox 的生命周期通常绑定 Scope、Conversation 或 Session。" },
+      { "id": "artifact", "label": "产物发布", "focus": ["capture_result", "artifact_ref"], "note": "大文件进入对象或字节存储，事件中只保留引用和元数据。" },
+      { "id": "cleanup", "label": "后台进程与清理", "focus": ["background_process", "cleanup", "acquire_sandbox"], "note": "持久 Sandbox 与一次性进程需要不同的清理策略。" }
+    ],
+    "viewBox": [1080, 900]
+  },
+  "lanes": [
+    { "id": "control", "label": "控制与作用域" },
+    { "id": "sandbox", "label": "Sandbox 生命周期" },
+    { "id": "workspace", "label": "Workspace 与进程" },
+    { "id": "persistence", "label": "结果与产物" }
+  ],
+  "phases": [
+    { "id": "provision", "label": "定位与准备", "fromCol": 0, "toCol": 2 },
+    { "id": "run", "label": "执行", "fromCol": 3, "toCol": 4, "variant": "emphasis" },
+    { "id": "publish", "label": "记录与发布", "fromCol": 5, "toCol": 5, "variant": "dashed" }
+  ],
+  "mainPath": ["resolve_scope", "acquire_sandbox", "mount_workspace", "execute_tool", "capture_result", "artifact_ref"],
+  "nodes": [
+    { "id": "resolve_scope", "lane": "control", "col": 0, "type": "backend", "label": "解析作用域", "sublabel": "Scope / Session" },
+    { "id": "cleanup", "lane": "control", "col": 5, "type": "security", "label": "清理策略", "sublabel": "复用、停止或销毁" },
+    { "id": "acquire_sandbox", "lane": "sandbox", "col": 1, "type": "cloud", "label": "获取 Sandbox", "sublabel": "Local · Docker · Remote" },
+    { "id": "mount_workspace", "lane": "workspace", "col": 2, "type": "database", "label": "准备 Workspace", "sublabel": "目录、挂载与凭据" },
+    { "id": "execute_tool", "lane": "workspace", "col": 3, "type": "backend", "label": "执行工具", "sublabel": "命令 · 文件 · 网络" },
+    { "id": "background_process", "lane": "workspace", "col": 5, "type": "messagebus", "label": "后台进程", "sublabel": "handle、日志与终止" },
+    { "id": "capture_result", "lane": "persistence", "col": 4, "type": "database", "label": "记录执行结果", "sublabel": "输出与退出码" },
+    { "id": "artifact_ref", "lane": "persistence", "col": 5, "type": "database", "label": "Artifact 引用", "sublabel": "对象存储 + 稳定标识" }
+  ],
+  "edges": [
+    { "id": "scope-sandbox", "from": "resolve_scope", "to": "acquire_sandbox", "variant": "emphasis" },
+    { "id": "sandbox-workspace", "from": "acquire_sandbox", "to": "mount_workspace", "fromSide": "bottom", "toSide": "top", "channelY": 335, "variant": "emphasis" },
+    { "id": "workspace-execute", "from": "mount_workspace", "to": "execute_tool", "variant": "emphasis" },
+    { "id": "execute-result", "from": "execute_tool", "to": "capture_result", "variant": "emphasis" },
+    { "id": "result-ref", "from": "capture_result", "to": "artifact_ref", "variant": "emphasis" },
+    { "id": "execute-background", "from": "execute_tool", "to": "background_process", "route": "straight", "variant": "dashed" },
+    { "id": "background-cleanup", "from": "background_process", "to": "cleanup", "label": "stop / keep", "variant": "security" },
+    { "id": "cleanup-sandbox", "from": "cleanup", "to": "acquire_sandbox", "fromSide": "left", "toSide": "left", "route": "return-left", "variant": "security" }
+  ],
+  "cards": [
+    { "dot": "cyan", "title": "三种状态", "items": ["Sandbox：隔离边界和执行资源", "Workspace：Agent 能读写的工作目录", "Artifact：离开执行环境后仍可引用的产物"] },
+    { "dot": "amber", "title": "必须追踪", "items": ["作用域到 Sandbox 的映射", "后台进程句柄与输出", "事件到 Artifact 的稳定引用", "取消与过期时的清理责任"] }
+  ]
+}

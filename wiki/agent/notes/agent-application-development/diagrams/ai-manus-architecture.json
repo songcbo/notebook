@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "AI Manus 当前架构",
+    "subtitle": "Application 编排、共享后端 Native Harness 与 Per-session Docker Sandbox",
+    "output": "ai-manus-architecture.html",
+    "animation": "none",
+    "visual_preset": "signal-flow",
+    "quality_profile": "showcase",
+    "viewBox": [1500, 780],
+    "views": [
+      { "id": "message-path", "label": "消息主路径", "focus": ["frontend", "api", "application", "flow", "instance", "agent", "llm"], "note": "用户输入进入 Application，再由 FlowRuntime 与 AgentRuntimeInstance 驱动 AgentBase。" },
+      { "id": "runtime-state", "label": "运行状态", "focus": ["application", "flow", "redis", "postgres"], "note": "PostgreSQL 保存业务事实，Redis Streams 负责 Task、Mailbox 与 deferred input。" },
+      { "id": "tool-execution", "label": "工具执行", "focus": ["agent", "sandbox", "minio"], "note": "Native Harness 在共享 Backend，真正的命令和文件操作进入 Session Docker Sandbox。" }
+    ]
+  },
+  "components": [
+    { "id": "frontend", "type": "frontend", "label": "Vue Frontend", "sublabel": "REST + SSE", "pos": [30, 270], "size": [150, 70] },
+    { "id": "api", "type": "backend", "label": "FastAPI API", "sublabel": "Session · Message · Event", "pos": [220, 270], "size": [160, 70] },
+    { "id": "application", "type": "backend", "label": "Application", "sublabel": "TaskOrchestrationService", "pos": [420, 270], "size": [170, 70] },
+    { "id": "flow", "type": "backend", "label": "FlowRuntime", "sublabel": "Agent Registry · Dispatch", "pos": [630, 270], "size": [170, 70], "tag": "Multi-agent" },
+    { "id": "instance", "type": "backend", "label": "AgentRuntimeInstance", "sublabel": "Serial mailbox consumer", "pos": [840, 270], "size": [180, 70] },
+    { "id": "agent", "type": "backend", "label": "AgentBase", "sublabel": "LLM Loop · Memory · Tools · Approval", "pos": [1060, 270], "size": [190, 70], "tag": "Native Harness" },
+    { "id": "llm", "type": "external", "label": "LLM Provider", "sublabel": "OpenAI-compatible API", "pos": [1290, 270], "size": [150, 70] },
+    { "id": "postgres", "type": "database", "label": "PostgreSQL", "sublabel": "Session · Event · Agent · Checkpoint", "pos": [420, 500], "size": [170, 70] },
+    { "id": "redis", "type": "messagebus", "label": "Redis Streams", "sublabel": "Task · Mailbox · Deferred Input", "pos": [630, 500], "size": [170, 70] },
+    { "id": "sandbox", "type": "cloud", "label": "Session Sandbox", "sublabel": "Docker + Sandbox FastAPI", "pos": [1060, 500], "size": [190, 70], "tag": "Tool execution" },
+    { "id": "minio", "type": "database", "label": "MinIO", "sublabel": "File binaries", "pos": [1290, 500], "size": [150, 70] }
+  ],
+  "boundaries": [
+    { "kind": "region", "label": "Shared Backend process", "wraps": ["api", "application", "flow", "instance", "agent"], "pad": 24 },
+    { "kind": "region", "label": "Session execution environment", "wraps": ["sandbox", "minio"], "pad": 24 }
+  ],
+  "connections": [
+    { "id": "frontend-api", "from": "frontend", "to": "api", "label": "HTTP / SSE", "variant": "emphasis", "labelAt": [200, 250] },
+    { "id": "api-application", "from": "api", "to": "application", "variant": "emphasis" },
+    { "id": "application-flow", "from": "application", "to": "flow", "label": "start / resume", "variant": "emphasis", "labelAt": [605, 250] },
+    { "id": "flow-instance", "from": "flow", "to": "instance", "label": "mailbox event", "variant": "emphasis", "labelAt": [815, 250] },
+    { "id": "instance-agent", "from": "instance", "to": "agent", "label": "agent task", "variant": "emphasis", "labelAt": [1035, 250] },
+    { "id": "agent-llm", "from": "agent", "to": "llm", "label": "chat completion", "variant": "emphasis", "labelAt": [1265, 250] },
+    { "id": "application-postgres", "from": "application", "to": "postgres", "label": "events / checkpoints", "fromSide": "bottom", "toSide": "top", "labelAt": [505, 430] },
+    { "id": "flow-redis", "from": "flow", "to": "redis", "label": "publish / consume", "fromSide": "bottom", "toSide": "top", "labelAt": [715, 430] },
+    { "id": "agent-sandbox", "from": "agent", "to": "sandbox", "label": "tool request", "variant": "security", "fromSide": "bottom", "toSide": "top", "labelAt": [1155, 430] },
+    { "id": "sandbox-minio", "from": "sandbox", "to": "minio", "label": "file object", "labelAt": [1265, 480] }
+  ],
+  "cards": [
+    { "dot": "cyan", "title": "当前结构", "items": ["Application、FlowRuntime、AgentRuntimeInstance 已形成三段编排", "AgentBase 集中拥有 LLM Loop、Memory、Tools、Approval 与 Checkpoint", "Runtime 在共享 Backend，Sandbox 主要隔离工具执行"] },
+    { "dot": "rose", "title": "需要后续核查", "items": ["Native Harness 尚无稳定跨进程 Runtime Contract", "完整恢复横跨 PostgreSQL、Redis、Sandbox 与 MinIO", "这些是分析问题，不在本图给出改造方案"] }
+  ]
+}

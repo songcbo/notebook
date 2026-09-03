@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "上下文、Prompt、Memory 与 Skill 的组装",
+    "subtitle": "不同来源不是简单拼接：先选择可见信息，再压缩和预算，最后形成模型消息",
+    "output": "module-context-assembly.html",
+    "animation": "none",
+    "visual_preset": "signal-flow",
+    "quality_profile": "showcase",
+    "views": [
+      { "id": "main", "label": "上下文主路径", "focus": ["turn_input", "history", "assembler", "budget", "model_messages"], "note": "历史投影是主干，其他来源按项目能力注入。" },
+      { "id": "knowledge", "label": "Memory 与 Skill", "focus": ["extra_sources", "assembler", "budget"], "note": "Memory 提供运行时召回，Skill 提供可发现和可加载的程序化知识。" },
+      { "id": "compaction", "label": "压缩与预算", "focus": ["history", "compaction", "budget", "model_messages"], "note": "压缩必须保留工具结果、审批状态和继续执行所需事实。" }
+    ],
+    "viewBox": [1040, 900]
+  },
+  "lanes": [
+    { "id": "request", "label": "当前 Turn" },
+    { "id": "selection", "label": "可见信息选择" },
+    { "id": "assembly", "label": "投影与组装" },
+    { "id": "state", "label": "压缩状态" },
+    { "id": "model", "label": "模型输入" }
+  ],
+  "phases": [
+    { "id": "collect", "label": "收集", "fromCol": 0, "toCol": 2 },
+    { "id": "shape", "label": "投影与压缩", "fromCol": 3, "toCol": 4, "variant": "emphasis" },
+    { "id": "emit", "label": "预算与输出", "fromCol": 5, "toCol": 5, "variant": "dashed" }
+  ],
+  "mainPath": ["turn_input", "select_visible", "history", "assembler", "budget", "model_messages"],
+  "nodes": [
+    { "id": "turn_input", "lane": "request", "col": 0, "type": "external", "label": "当前输入", "sublabel": "文本 · 文件 · Actor" },
+    { "id": "select_visible", "lane": "selection", "col": 1, "type": "security", "label": "选择可见信息", "sublabel": "Scope · 权限 · 当前任务" },
+    { "id": "history", "lane": "assembly", "col": 2, "type": "database", "label": "历史投影", "sublabel": "Items → Messages" },
+    { "id": "assembler", "lane": "assembly", "col": 3, "type": "backend", "label": "上下文组装", "sublabel": "顺序、格式与来源标记" },
+    { "id": "budget", "lane": "assembly", "col": 5, "type": "security", "label": "Token Budget", "sublabel": "裁剪与模型窗口" },
+    { "id": "model_messages", "lane": "model", "col": 5, "type": "cloud", "label": "模型消息", "sublabel": "system + context" },
+    { "id": "extra_sources", "lane": "selection", "col": 3, "type": "backend", "label": "提示词 · 记忆 · Skill", "sublabel": "固定块、召回与按需知识", "width": 150 },
+    { "id": "compaction", "lane": "state", "col": 3, "type": "messagebus", "label": "Compaction", "sublabel": "摘要与关键事实保留" }
+  ],
+  "edges": [
+    { "id": "input-select", "from": "turn_input", "to": "select_visible", "variant": "emphasis" },
+    { "id": "select-history", "from": "select_visible", "to": "history", "fromSide": "bottom", "toSide": "top", "channelY": 335, "variant": "emphasis" },
+    { "id": "history-assembler", "from": "history", "to": "assembler", "variant": "emphasis" },
+    { "id": "assembler-budget", "from": "assembler", "to": "budget", "variant": "emphasis" },
+    { "id": "budget-model", "from": "budget", "to": "model_messages", "route": "straight", "variant": "emphasis" },
+    { "id": "sources-assembler", "from": "extra_sources", "to": "assembler", "fromSide": "bottom", "toSide": "top", "variant": "dashed" },
+    { "id": "history-compaction", "from": "history", "to": "compaction", "fromSide": "bottom", "toSide": "left", "variant": "dashed" },
+    { "id": "compaction-budget", "from": "compaction", "to": "budget", "fromSide": "right", "toSide": "bottom", "variant": "dashed" }
+  ],
+  "cards": [
+    { "dot": "cyan", "title": "不要混为一谈", "items": ["Prompt 是最终消息形态", "Context 是本次可见信息集合", "Memory 是可跨 Turn 召回的状态", "Skill 是可发现、可加载的能力知识"] },
+    { "dot": "violet", "title": "实现观察点", "items": ["谁决定可见范围", "历史如何投影成模型消息", "压缩后的事实如何继续执行", "Skill 是复制进工作区还是直接注入"] }
+  ]
+}

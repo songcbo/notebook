@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "QM 整体架构",
+    "subtitle": "Scope-first Headless Core 与可切换 Agent Runtime",
+    "output": "qm-architecture.html",
+    "animation": "none",
+    "visual_preset": "signal-flow",
+    "quality_profile": "showcase",
+    "viewBox": [1260, 720],
+    "views": [
+      { "id": "turn-path", "label": "Turn 主路径", "focus": ["surface", "api", "orchestrator", "router", "runtime"], "note": "从交互入口进入 Core，再由 Harness Router 选择具体 Runtime。" },
+      { "id": "tool-control", "label": "工具控制", "focus": ["orchestrator", "tool-gate", "sandbox"], "note": "Runtime 决定调用，QM Core 掌握工具、审批与 Scope Sandbox。" },
+      { "id": "durable-state", "label": "持久状态", "focus": ["orchestrator", "postgres", "bytes"], "note": "Session、Run 与组织状态进入 PostgreSQL，大对象进入 Durable Bytes。" }
+    ]
+  },
+  "components": [
+    { "id": "surface", "type": "frontend", "label": "Surface", "sublabel": "Web · Admin · Portal · Slack", "pos": [50, 270], "size": [150, 70] },
+    { "id": "api", "type": "backend", "label": "Core API", "sublabel": "Fastify · Auth · Turn Stream", "pos": [260, 270], "size": [160, 70] },
+    { "id": "resolution", "type": "security", "label": "Resolution", "sublabel": "Actor · Scope · ACL · Config", "pos": [470, 100], "size": [170, 70] },
+    { "id": "orchestrator", "type": "backend", "label": "Core Orchestrator", "sublabel": "Session · Turn · Context", "pos": [470, 270], "size": [170, 70], "tag": "Application authority" },
+    { "id": "router", "type": "backend", "label": "Harness Router", "sublabel": "Harness + Model selection", "pos": [700, 270], "size": [170, 70] },
+    { "id": "runtime", "type": "external", "label": "Agent Runtime", "sublabel": "Codex · Claude · Pi · OpenCode", "pos": [930, 270], "size": [190, 70] },
+    { "id": "tool-gate", "type": "security", "label": "Tools & Approval", "sublabel": "Policy · Dynamic Tools", "pos": [700, 470], "size": [170, 70] },
+    { "id": "sandbox", "type": "cloud", "label": "Scope Sandbox", "sublabel": "Local · AWS · Sprites", "pos": [930, 470], "size": [190, 70], "tag": "Persistent per scope" },
+    { "id": "postgres", "type": "database", "label": "PostgreSQL", "sublabel": "Session · Run · Task · Audit", "pos": [260, 470], "size": [160, 70] },
+    { "id": "bytes", "type": "database", "label": "Durable Bytes", "sublabel": "Local / S3", "pos": [470, 470], "size": [170, 70] }
+  ],
+  "boundaries": [
+    { "kind": "region", "label": "QM Headless Core", "wraps": ["api", "resolution", "orchestrator", "router", "tool-gate", "postgres", "bytes"], "pad": 24 },
+    { "kind": "region", "label": "Execution boundary", "wraps": ["runtime", "sandbox"], "pad": 24 }
+  ],
+  "connections": [
+    { "id": "surface-api", "from": "surface", "to": "api", "label": "HTTP / stream", "variant": "emphasis", "labelAt": [230, 250] },
+    { "id": "api-orchestrator", "from": "api", "to": "orchestrator", "variant": "emphasis" },
+    { "id": "resolution-orchestrator", "from": "resolution", "to": "orchestrator", "label": "scope view", "variant": "security", "fromSide": "bottom", "toSide": "top", "labelAt": [555, 220] },
+    { "id": "orchestrator-router", "from": "orchestrator", "to": "router", "label": "HarnessTurnInput", "variant": "emphasis", "labelAt": [670, 250] },
+    { "id": "router-runtime", "from": "router", "to": "runtime", "label": "SDK / JSON-RPC", "variant": "emphasis", "labelAt": [900, 250] },
+    { "id": "runtime-tool", "from": "runtime", "to": "tool-gate", "label": "Tool Call", "fromSide": "bottom", "toSide": "right", "via": [[1025, 400], [900, 400], [900, 505]], "labelAt": [965, 382] },
+    { "id": "tool-sandbox", "from": "tool-gate", "to": "sandbox", "label": "approved execution", "variant": "security", "labelAt": [900, 570] },
+    { "id": "orchestrator-postgres", "from": "orchestrator", "to": "postgres", "fromSide": "bottom", "toSide": "top", "route": "orthogonal-v" },
+    { "id": "orchestrator-bytes", "from": "orchestrator", "to": "bytes", "fromSide": "bottom", "toSide": "top" }
+  ],
+  "cards": [
+    { "dot": "cyan", "title": "核心判断", "items": ["QM Core 持有应用语义与策略", "Harness 隐藏具体 Runtime 协议", "Scope 同时是资源、权限与持久 Sandbox 边界"] },
+    { "dot": "amber", "title": "技术", "items": ["TypeScript + Node.js 24 + Fastify", "PostgreSQL 负责业务事实与 Run 协调", "本地或 S3 保存大对象"] }
+  ]
+}

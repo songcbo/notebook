@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "diagram_type": "sequence",
+  "meta": {
+    "title": "QM：一次 Turn 如何从网页进入 Headless Core",
+    "subtitle": "Fastify 负责入口，RunStore 负责执行所有权，TurnStream / SessionState 负责让前端看见变化",
+    "output": "qm-turn-ui-sequence.html",
+    "visual_preset": "signal-flow",
+    "quality_profile": "showcase",
+    "views": [
+      { "id": "run", "label": "Run 主路径", "focus": ["user", "web", "api", "runstore", "worker", "harness", "session"], "note": "看一次 Web 请求怎样变成 Worker 执行。" },
+      { "id": "approval", "label": "审批恢复", "focus": ["harness", "sse", "web", "api", "worker"], "note": "审批继续使用原 Run，而不是重新创建一轮。" },
+      { "id": "server-run", "label": "服务端主动运行", "focus": ["runstore", "worker", "sse", "web"], "note": "Cron 或其他 Surface 启动的 Run 也能被网页重新附着。" }
+    ],
+    "viewBox": [1360, 1120]
+  },
+  "participants": [
+    { "id": "user", "type": "external", "label": "User", "sublabel": "浏览器用户" },
+    { "id": "web", "type": "frontend", "label": "Web UI", "sublabel": "WorkBlock / sidebar" },
+    { "id": "api", "type": "backend", "label": "Fastify", "sublabel": "gate + turn" },
+    { "id": "runstore", "type": "database", "label": "RunStore", "sublabel": "lease + status" },
+    { "id": "worker", "type": "backend", "label": "Worker", "sublabel": "claim + heartbeat" },
+    { "id": "harness", "type": "cloud", "label": "Harness", "sublabel": "Codex / Claude / Pi" },
+    { "id": "session", "type": "database", "label": "Session", "sublabel": "entries + audit" },
+    { "id": "sse", "type": "messagebus", "label": "SSE / State", "sublabel": "Run stream + working" }
+  ],
+  "activations": [
+    { "participant": "web", "from": 180, "to": 1000, "type": "frontend" },
+    { "participant": "api", "from": 240, "to": 760, "type": "backend" },
+    { "participant": "worker", "from": 360, "to": 880, "type": "backend" },
+    { "participant": "harness", "from": 420, "to": 720, "type": "cloud" },
+    { "participant": "sse", "from": 300, "to": 1000, "type": "messagebus" }
+  ],
+  "messages": [
+    { "id": "request", "from": "user", "to": "web", "y": 190, "label": "① 发送消息", "variant": "emphasis" },
+    { "id": "turn", "from": "web", "to": "api", "y": 250, "label": "② POST /v1/turns + actor", "variant": "default" },
+    { "id": "persist-run", "from": "api", "to": "runstore", "y": 310, "label": "③ 创建 pending Run", "variant": "emphasis", "note": "RunStore 是执行事实，不是 SSE。" },
+    { "id": "state-working", "from": "api", "to": "sse", "y": 370, "label": "④ working / awaiting_approval", "variant": "default" },
+    { "id": "claim", "from": "runstore", "to": "worker", "y": 430, "label": "⑤ claim + lease", "variant": "emphasis" },
+    { "id": "harness-input", "from": "worker", "to": "harness", "y": 490, "label": "⑥ HarnessTurnInput", "variant": "default" },
+    { "id": "entries", "from": "harness", "to": "session", "y": 550, "label": "⑦ append user / tool / assistant entries", "variant": "emphasis" },
+    { "id": "events", "from": "harness", "to": "sse", "y": 610, "label": "⑧ delta / approval / activity", "variant": "default" },
+    { "id": "render", "from": "sse", "to": "web", "y": 670, "label": "⑨ WorkBlock 增量 + sidebar 状态", "variant": "return" },
+    { "id": "approval", "from": "web", "to": "api", "y": 730, "label": "⑩ 用户批准或 signal", "variant": "security" },
+    { "id": "resume", "from": "api", "to": "worker", "y": 790, "label": "⑪ resume 同一个 Run", "variant": "emphasis" },
+    { "id": "terminal", "from": "worker", "to": "runstore", "y": 850, "label": "⑫ done / failed + delivery", "variant": "emphasis" },
+    { "id": "idle", "from": "runstore", "to": "sse", "y": 910, "label": "⑬ idle + participants", "variant": "default" },
+    { "id": "close", "from": "sse", "to": "web", "y": 970, "label": "⑭ 收口；断线可按 Run 重连", "variant": "return", "note": "网页只是观察者，也可以稍后重新附着。" }
+  ],
+  "cards": [
+    { "dot": "cyan", "title": "QM 的三个事实源", "items": ["Session：用户和 Agent 看见的对话条目", "RunStore：谁执行、尝试几次、租约是否有效", "SSE / TurnStream：当前网页看到的低延迟窗口"] },
+    { "dot": "amber", "title": "为什么能附着 Cron Run", "items": ["Run 先进入持久 Store，再由 Worker 执行", "网页通过 activeRunForThread 找到正在运行的 Run", "断线后重新读取 transcript，再接收后续流"] },
+    { "dot": "rose", "title": "审批不是新问题", "items": ["审批卡片绑定原 tool_call / Run", "批准后恢复原 Worker 执行", "拒绝也要写结构化结果，避免消息配对断裂"] }
+  ]
+}

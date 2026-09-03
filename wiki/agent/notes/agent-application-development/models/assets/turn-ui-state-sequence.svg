@@ -1,0 +1,311 @@
+<svg viewBox="0 0 1280 1320" role="img" aria-labelledby="archify-diagram-title archify-diagram-description" data-preset="signal-flow" data-quality-profile="showcase">
+        <title id="archify-diagram-title">一次 Turn：前端与后端如何一起完成</title>
+        <desc id="archify-diagram-description">把“发送消息、运行、工具、审批、重连、结束”放在同一条时间线上</desc>
+        <!-- Definitions -->
+        <defs>
+          <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" class="m-default" />
+          </marker>
+          <marker id="arrowhead-emphasis" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" class="m-emphasis" />
+          </marker>
+          <marker id="arrowhead-security" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" class="m-security" />
+          </marker>
+          <marker id="arrowhead-dashed" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" class="m-dashed" />
+          </marker>
+          <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+            <path d="M 40 0 L 0 0 0 40" class="c-grid" stroke-width="0.5"/>
+          </pattern>
+        </defs>
+
+        <!-- Background Grid -->
+        <rect width="100%" height="100%" fill="url(#grid)" />
+
+        <!-- Time Segments -->
+
+
+        <!-- Lifelines -->
+        <path d="M 62 142 L 62 1255" class="a-default" stroke-width="0.8" stroke-dasharray="3,7"/>
+        <path d="M 170 142 L 170 1255" class="a-default" stroke-width="0.8" stroke-dasharray="3,7"/>
+        <path d="M 278 142 L 278 1255" class="a-default" stroke-width="0.8" stroke-dasharray="3,7"/>
+        <path d="M 386 142 L 386 1255" class="a-default" stroke-width="0.8" stroke-dasharray="3,7"/>
+        <path d="M 494 142 L 494 1255" class="a-default" stroke-width="0.8" stroke-dasharray="3,7"/>
+        <path d="M 602 142 L 602 1255" class="a-default" stroke-width="0.8" stroke-dasharray="3,7"/>
+        <path d="M 710 142 L 710 1255" class="a-default" stroke-width="0.8" stroke-dasharray="3,7"/>
+
+        <!-- Activations -->
+        <rect x="165" y="180" width="10" height="1050" rx="3" class="c-mask"/>
+        <rect x="165" y="180" width="10" height="1050" rx="3" class="c-frontend" stroke-width="1"/>
+        <rect x="273" y="250" width="10" height="840" rx="3" class="c-mask"/>
+        <rect x="273" y="250" width="10" height="840" rx="3" class="c-backend" stroke-width="1"/>
+        <rect x="489" y="390" width="10" height="740" rx="3" class="c-mask"/>
+        <rect x="489" y="390" width="10" height="740" rx="3" class="c-backend" stroke-width="1"/>
+        <rect x="705" y="430" width="10" height="820" rx="3" class="c-mask"/>
+        <rect x="705" y="430" width="10" height="820" rx="3" class="c-messagebus" stroke-width="1"/>
+
+        <!-- Messages -->
+        <g data-edge-from="user" data-edge-to="ui" data-edge-label="① 输入一句话" data-edge-key="0" data-edge-id="send">
+          <path data-composition-edge-from="user" data-composition-edge-to="ui" data-composition-edge-id="send" data-composition-points="69,190;163,190" d="M 69 190 L 163 190" class="a-emphasis" stroke-width="1.8" marker-end="url(#arrowhead-emphasis)"/>
+        <g data-detail="context">
+          <rect x="78.8" y="170" width="74.4" height="16" rx="3" class="c-mask"/>
+          <text x="116" y="180" class="t-backend" font-size="9" text-anchor="middle">① 输入一句话</text>
+        </g>
+        <text data-detail="fine" x="81" y="208" class="t-dim" font-size="7">用户只关心“我说的话有没有被接收”。</text>
+        </g>
+
+        <g data-edge-from="ui" data-edge-to="api" data-edge-label="② POST /chat（带幂等键）" data-edge-key="1" data-edge-id="post">
+          <path data-composition-edge-from="ui" data-composition-edge-to="api" data-composition-edge-id="post" data-composition-points="177,250;271,250" d="M 177 250 L 271 250" class="a-default" stroke-width="1.4" marker-end="url(#arrowhead)"/>
+        <g data-detail="context">
+          <rect x="155.6" y="230" width="136.8" height="16" rx="3" class="c-mask"/>
+          <text x="224" y="240" class="t-backend" font-size="9" text-anchor="middle">② POST /chat（带幂等键）</text>
+        </g>
+        </g>
+
+        <g data-edge-from="api" data-edge-to="store" data-edge-label="③ 先写入 accepted / user message" data-edge-key="2" data-edge-id="accepted">
+          <path data-composition-edge-from="api" data-composition-edge-to="store" data-composition-edge-id="accepted" data-composition-points="285,310;379,310" d="M 285 310 L 379 310" class="a-emphasis" stroke-width="1.8" marker-end="url(#arrowhead-emphasis)"/>
+        <g data-detail="context">
+          <rect x="242.8" y="290" width="178.4" height="16" rx="3" class="c-mask"/>
+          <text x="332" y="300" class="t-backend" font-size="9" text-anchor="middle">③ 先写入 accepted / user message</text>
+        </g>
+        <text data-detail="fine" x="297" y="328" class="t-dim" font-size="7">先记事实，避免网络断开后消息凭空消失。</text>
+        </g>
+
+        <g data-edge-from="api" data-edge-to="run" data-edge-label="④ 创建或复用 Turn / Run" data-edge-key="3" data-edge-id="enqueue">
+          <path data-composition-edge-from="api" data-composition-edge-to="run" data-composition-edge-id="enqueue" data-composition-points="285,370;487,370" d="M 285 370 L 487 370" class="a-default" stroke-width="1.4" marker-end="url(#arrowhead)"/>
+        <g data-detail="context">
+          <rect x="320.2" y="350" width="131.60000000000002" height="16" rx="3" class="c-mask"/>
+          <text x="386" y="360" class="t-backend" font-size="9" text-anchor="middle">④ 创建或复用 Turn / Run</text>
+        </g>
+        </g>
+
+        <g data-edge-from="run" data-edge-to="stream" data-edge-label="⑤ session.status = running" data-edge-key="4" data-edge-id="running">
+          <path data-composition-edge-from="run" data-composition-edge-to="stream" data-composition-edge-id="running" data-composition-points="501,430;703,430" d="M 501 430 L 703 430" class="a-emphasis" stroke-width="1.8" marker-end="url(#arrowhead-emphasis)"/>
+        <g data-detail="context">
+          <rect x="528.4" y="410" width="147.20000000000002" height="16" rx="3" class="c-mask"/>
+          <text x="602" y="420" class="t-backend" font-size="9" text-anchor="middle">⑤ session.status = running</text>
+        </g>
+        </g>
+
+        <g data-edge-from="stream" data-edge-to="ui" data-edge-label="⑥ 前端显示 Working…" data-edge-key="5" data-edge-id="running-ui">
+          <path data-composition-edge-from="stream" data-composition-edge-to="ui" data-composition-edge-id="running-ui" data-composition-points="703,490;177,490" d="M 703 490 L 177 490" class="a-default" stroke-width="1.4" stroke-dasharray="3,5" marker-end="url(#arrowhead)"/>
+        <g data-detail="context">
+          <rect x="384.6" y="470" width="110.8" height="16" rx="3" class="c-mask"/>
+          <text x="440" y="480" class="t-muted" font-size="9" text-anchor="middle">⑥ 前端显示 Working…</text>
+        </g>
+        <text data-detail="fine" x="189" y="508" class="t-dim" font-size="7">服务端状态与前端 loading 不是同一个变量。</text>
+        </g>
+
+        <g data-edge-from="run" data-edge-to="sandbox" data-edge-label="⑦ 需要工具：执行命令 / 读文件" data-edge-key="6" data-edge-id="tool-call">
+          <path data-composition-edge-from="run" data-composition-edge-to="sandbox" data-composition-edge-id="tool-call" data-composition-points="501,560;595,560" d="M 501 560 L 595 560" class="a-default" stroke-width="1.4" marker-end="url(#arrowhead)"/>
+        <g data-detail="context">
+          <rect x="466.6" y="540" width="162.8" height="16" rx="3" class="c-mask"/>
+          <text x="548" y="550" class="t-backend" font-size="9" text-anchor="middle">⑦ 需要工具：执行命令 / 读文件</text>
+        </g>
+        </g>
+
+        <g data-edge-from="sandbox" data-edge-to="run" data-edge-label="⑧ 返回结构化结果 + 产物引用" data-edge-key="7" data-edge-id="tool-result">
+          <path data-composition-edge-from="sandbox" data-composition-edge-to="run" data-composition-edge-id="tool-result" data-composition-points="595,630;501,630" d="M 595 630 L 501 630" class="a-default" stroke-width="1.4" stroke-dasharray="3,5" marker-end="url(#arrowhead)"/>
+        <g data-detail="context">
+          <rect x="471.8" y="610" width="152.4" height="16" rx="3" class="c-mask"/>
+          <text x="548" y="620" class="t-muted" font-size="9" text-anchor="middle">⑧ 返回结构化结果 + 产物引用</text>
+        </g>
+        </g>
+
+        <g data-edge-from="run" data-edge-to="stream" data-edge-label="⑨ assistant delta / tool event" data-edge-key="8" data-edge-id="delta">
+          <path data-composition-edge-from="run" data-composition-edge-to="stream" data-composition-edge-id="delta" data-composition-points="501,700;703,700" d="M 501 700 L 703 700" class="a-default" stroke-width="1.4" marker-end="url(#arrowhead)"/>
+        <g data-detail="context">
+          <rect x="518" y="680" width="168" height="16" rx="3" class="c-mask"/>
+          <text x="602" y="690" class="t-backend" font-size="9" text-anchor="middle">⑨ assistant delta / tool event</text>
+        </g>
+        </g>
+
+        <g data-edge-from="stream" data-edge-to="ui" data-edge-label="⑩ 前端增量渲染" data-edge-key="9" data-edge-id="delta-ui">
+          <path data-composition-edge-from="stream" data-composition-edge-to="ui" data-composition-edge-id="delta-ui" data-composition-points="703,760;177,760" d="M 703 760 L 177 760" class="a-default" stroke-width="1.4" stroke-dasharray="3,5" marker-end="url(#arrowhead)"/>
+        <g data-detail="context">
+          <rect x="397.6" y="740" width="84.8" height="16" rx="3" class="c-mask"/>
+          <text x="440" y="750" class="t-muted" font-size="9" text-anchor="middle">⑩ 前端增量渲染</text>
+        </g>
+        </g>
+
+        <g data-edge-from="run" data-edge-to="stream" data-edge-label="⑪ 需要审批：暂停当前 tool call" data-edge-key="10" data-edge-id="approval">
+          <path data-composition-edge-from="run" data-composition-edge-to="stream" data-composition-edge-id="approval" data-composition-points="501,830;703,830" d="M 501 830 L 703 830" class="a-security" stroke-width="1.4" marker-end="url(#arrowhead-security)"/>
+        <g data-detail="context">
+          <rect x="518" y="810" width="168" height="16" rx="3" class="c-mask"/>
+          <text x="602" y="820" class="t-security" font-size="9" text-anchor="middle">⑪ 需要审批：暂停当前 tool call</text>
+        </g>
+        <text data-detail="fine" x="513" y="848" class="t-dim" font-size="7">暂停不是失败，也不是新 Turn。</text>
+        </g>
+
+        <g data-edge-from="stream" data-edge-to="ui" data-edge-label="⑫ 前端显示审批卡片" data-edge-key="11" data-edge-id="approval-ui">
+          <path data-composition-edge-from="stream" data-composition-edge-to="ui" data-composition-edge-id="approval-ui" data-composition-points="703,890;177,890" d="M 703 890 L 177 890" class="a-default" stroke-width="1.4" stroke-dasharray="3,5" marker-end="url(#arrowhead)"/>
+        <g data-detail="context">
+          <rect x="387.2" y="870" width="105.60000000000001" height="16" rx="3" class="c-mask"/>
+          <text x="440" y="880" class="t-muted" font-size="9" text-anchor="middle">⑫ 前端显示审批卡片</text>
+        </g>
+        </g>
+
+        <g data-edge-from="ui" data-edge-to="api" data-edge-label="⑬ 用户批准 / 拒绝" data-edge-key="12" data-edge-id="approval-answer">
+          <path data-composition-edge-from="ui" data-composition-edge-to="api" data-composition-edge-id="approval-answer" data-composition-points="177,950;271,950" d="M 177 950 L 271 950" class="a-security" stroke-width="1.4" marker-end="url(#arrowhead-security)"/>
+        <g data-detail="context">
+          <rect x="173.8" y="930" width="100.4" height="16" rx="3" class="c-mask"/>
+          <text x="224" y="940" class="t-security" font-size="9" text-anchor="middle">⑬ 用户批准 / 拒绝</text>
+        </g>
+        </g>
+
+        <g data-edge-from="api" data-edge-to="run" data-edge-label="⑭ 用原 tool_call_id 恢复" data-edge-key="13" data-edge-id="resume">
+          <path data-composition-edge-from="api" data-composition-edge-to="run" data-composition-edge-id="resume" data-composition-points="285,1010;487,1010" d="M 285 1010 L 487 1010" class="a-emphasis" stroke-width="1.8" marker-end="url(#arrowhead-emphasis)"/>
+        <g data-detail="context">
+          <rect x="317.6" y="990" width="136.8" height="16" rx="3" class="c-mask"/>
+          <text x="386" y="1000" class="t-backend" font-size="9" text-anchor="middle">⑭ 用原 tool_call_id 恢复</text>
+        </g>
+        </g>
+
+        <g data-edge-from="run" data-edge-to="store" data-edge-label="⑮ 写入最终事件与 usage" data-edge-key="14" data-edge-id="final">
+          <path data-composition-edge-from="run" data-composition-edge-to="store" data-composition-edge-id="final" data-composition-points="487,1070;393,1070" d="M 487 1070 L 393 1070" class="a-emphasis" stroke-width="1.8" marker-end="url(#arrowhead-emphasis)"/>
+        <g data-detail="context">
+          <rect x="376.8" y="1050" width="126.4" height="16" rx="3" class="c-mask"/>
+          <text x="440" y="1060" class="t-backend" font-size="9" text-anchor="middle">⑮ 写入最终事件与 usage</text>
+        </g>
+        </g>
+
+        <g data-edge-from="run" data-edge-to="stream" data-edge-label="⑯ status = idle / waiting / failed" data-edge-key="15" data-edge-id="done">
+          <path data-composition-edge-from="run" data-composition-edge-to="stream" data-composition-edge-id="done" data-composition-points="501,1130;703,1130" d="M 501 1130 L 703 1130" class="a-default" stroke-width="1.4" marker-end="url(#arrowhead)"/>
+        <g data-detail="context">
+          <rect x="507.6" y="1110" width="188.8" height="16" rx="3" class="c-mask"/>
+          <text x="602" y="1120" class="t-backend" font-size="9" text-anchor="middle">⑯ status = idle / waiting / failed</text>
+        </g>
+        </g>
+
+        <g data-edge-from="stream" data-edge-to="ui" data-edge-label="⑰ 收口消息、停止计时器" data-edge-key="16" data-edge-id="done-ui">
+          <path data-composition-edge-from="stream" data-composition-edge-to="ui" data-composition-edge-id="done-ui" data-composition-points="703,1160;177,1160" d="M 703 1160 L 177 1160" class="a-default" stroke-width="1.4" stroke-dasharray="3,5" marker-end="url(#arrowhead)"/>
+        <g data-detail="context">
+          <rect x="376.8" y="1140" width="126.4" height="16" rx="3" class="c-mask"/>
+          <text x="440" y="1150" class="t-muted" font-size="9" text-anchor="middle">⑰ 收口消息、停止计时器</text>
+        </g>
+        </g>
+
+        <g data-edge-from="ui" data-edge-to="stream" data-edge-label="断线后：重订阅并取快照" data-edge-key="17" data-edge-id="reconnect">
+          <path data-composition-edge-from="ui" data-composition-edge-to="stream" data-composition-edge-id="reconnect" data-composition-points="177,1210;703,1210" d="M 177 1210 L 703 1210" class="a-dashed" stroke-width="1.4" marker-end="url(#arrowhead-dashed)"/>
+        <g data-detail="context">
+          <rect x="376.8" y="1190" width="126.4" height="16" rx="3" class="c-mask"/>
+          <text x="440" y="1200" class="t-messagebus" font-size="9" text-anchor="middle">断线后：重订阅并取快照</text>
+        </g>
+        <text data-detail="fine" x="189" y="1228" class="t-dim" font-size="7">先快照，再按 cursor/seq 接增量。</text>
+        </g>
+
+        <!-- Segment Labels -->
+
+
+        <!-- Participants -->
+        <g id="node-user" data-node-id="user" data-node-label="用户" tabindex="0" role="button" aria-label="Focus 用户, 说一句话, Sequence participant" aria-pressed="false" data-node-kind="external" data-node-sublabel="说一句话" data-node-context="Sequence participant">
+          <title>用户 · 说一句话 · Sequence participant</title>
+          <rect x="19" y="72" width="86" height="54" rx="6" class="c-mask"/>
+          <rect x="19" y="72" width="86" height="54" rx="6" class="c-external" stroke-width="1.5"/>
+          <g aria-hidden="true" data-semantic-sigil="external" class="semantic-sigil s-external" transform="translate(25 78) scale(0.6875)">
+            <rect x="2.5" y="5" width="8.5" height="8" rx="1.5"/>
+            <path d="M8 2.5h5.5V8M13.5 2.5 7.5 8.5"/>
+          </g>
+          <text data-detail-anchor x="62" y="94" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">用户</text>
+          <text data-detail="context" x="62" y="111" class="t-muted" font-size="7" text-anchor="middle">说一句话</text>
+        </g>
+
+        <g id="node-ui" data-node-id="ui" data-node-label="前端会话" tabindex="0" role="button" aria-label="Focus 前端会话, 本地状态 + 消息列表, Sequence participant" aria-pressed="false" data-node-kind="frontend" data-node-sublabel="本地状态 + 消息列表" data-node-context="Sequence participant">
+          <title>前端会话 · 本地状态 + 消息列表 · Sequence participant</title>
+          <rect x="127" y="72" width="86" height="54" rx="6" class="c-mask"/>
+          <rect x="127" y="72" width="86" height="54" rx="6" class="c-frontend" stroke-width="1.5"/>
+          <g aria-hidden="true" data-semantic-sigil="frontend" class="semantic-sigil s-frontend" transform="translate(133 78) scale(0.6875)">
+            <rect x="2" y="3" width="12" height="10" rx="2"/>
+            <path d="M2 6.5h12"/>
+            <circle cx="4.1" cy="4.8" r=".7" class="sigil-fill"/>
+            <circle cx="6.3" cy="4.8" r=".7" class="sigil-fill"/>
+          </g>
+          <text data-detail-anchor x="170" y="94" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">前端会话</text>
+          <text data-detail="context" x="170" y="111" class="t-muted" font-size="6.8" text-anchor="middle">本地状态 + 消息列表</text>
+        </g>
+
+        <g id="node-api" data-node-id="api" data-node-label="控制面 API" tabindex="0" role="button" aria-label="Focus 控制面 API, 接收命令、校验权限, Sequence participant" aria-pressed="false" data-node-kind="backend" data-node-sublabel="接收命令、校验权限" data-node-context="Sequence participant">
+          <title>控制面 API · 接收命令、校验权限 · Sequence participant</title>
+          <rect x="235" y="72" width="86" height="54" rx="6" class="c-mask"/>
+          <rect x="235" y="72" width="86" height="54" rx="6" class="c-backend" stroke-width="1.5"/>
+          <g aria-hidden="true" data-semantic-sigil="backend" class="semantic-sigil s-backend" transform="translate(241 78) scale(0.6875)">
+            <path d="M6 3 3 8l3 5M10 3l3 5-3 5"/>
+          </g>
+          <text data-detail-anchor x="278" y="94" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">控制面 API</text>
+          <text data-detail="context" x="278" y="111" class="t-muted" font-size="7" text-anchor="middle">接收命令、校验权限</text>
+        </g>
+
+        <g id="node-store" data-node-id="store" data-node-label="事实存储" tabindex="0" role="button" aria-label="Focus 事实存储, Session / Run / Event, Sequence participant" aria-pressed="false" data-node-kind="database" data-node-sublabel="Session / Run / Event" data-node-context="Sequence participant">
+          <title>事实存储 · Session / Run / Event · Sequence participant</title>
+          <rect x="343" y="72" width="86" height="54" rx="6" class="c-mask"/>
+          <rect x="343" y="72" width="86" height="54" rx="6" class="c-database" stroke-width="1.5"/>
+          <g aria-hidden="true" data-semantic-sigil="database" class="semantic-sigil s-database" transform="translate(349 78) scale(0.6875)">
+            <ellipse cx="8" cy="4" rx="5" ry="2"/>
+            <path d="M3 4v8c0 1.1 2.2 2 5 2s5-.9 5-2V4M3 8c0 1.1 2.2 2 5 2s5-.9 5-2"/>
+          </g>
+          <text data-detail-anchor x="386" y="94" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">事实存储</text>
+          <text data-detail="context" x="386" y="111" class="t-muted" font-size="6.1" text-anchor="middle">Session / Run / Event</text>
+        </g>
+
+        <g id="node-run" data-node-id="run" data-node-label="Agent Runtime" tabindex="0" role="button" aria-label="Focus Agent Runtime, 推理、工具、审批, Sequence participant" aria-pressed="false" data-node-kind="backend" data-node-sublabel="推理、工具、审批" data-node-context="Sequence participant">
+          <title>Agent Runtime · 推理、工具、审批 · Sequence participant</title>
+          <rect x="451" y="72" width="86" height="54" rx="6" class="c-mask"/>
+          <rect x="451" y="72" width="86" height="54" rx="6" class="c-backend" stroke-width="1.5"/>
+          <g aria-hidden="true" data-semantic-sigil="backend" class="semantic-sigil s-backend" transform="translate(457 78) scale(0.6875)">
+            <path d="M6 3 3 8l3 5M10 3l3 5-3 5"/>
+          </g>
+          <text data-detail-anchor x="494" y="94" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">Agent Runtime</text>
+          <text data-detail="context" x="494" y="111" class="t-muted" font-size="7" text-anchor="middle">推理、工具、审批</text>
+        </g>
+
+        <g id="node-sandbox" data-node-id="sandbox" data-node-label="Sandbox" tabindex="0" role="button" aria-label="Focus Sandbox, Harness 执行命令, Sequence participant" aria-pressed="false" data-node-kind="cloud" data-node-sublabel="Harness 执行命令" data-node-context="Sequence participant">
+          <title>Sandbox · Harness 执行命令 · Sequence participant</title>
+          <rect x="559" y="72" width="86" height="54" rx="6" class="c-mask"/>
+          <rect x="559" y="72" width="86" height="54" rx="6" class="c-cloud" stroke-width="1.5"/>
+          <g aria-hidden="true" data-semantic-sigil="cloud" class="semantic-sigil s-cloud" transform="translate(565 78) scale(0.6875)">
+            <path d="M4.3 12.5h7.3a2.4 2.4 0 0 0 .2-4.8 4 4 0 0 0-7.5-1.3A3.1 3.1 0 0 0 4.3 12.5Z"/>
+          </g>
+          <text data-detail-anchor x="602" y="94" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">Sandbox</text>
+          <text data-detail="context" x="602" y="111" class="t-muted" font-size="7" text-anchor="middle">Harness 执行命令</text>
+        </g>
+
+        <g id="node-stream" data-node-id="stream" data-node-label="实时通道" tabindex="0" role="button" aria-label="Focus 实时通道, SSE / WebSocket / Mux, Sequence participant" aria-pressed="false" data-node-kind="messagebus" data-node-sublabel="SSE / WebSocket / Mux" data-node-context="Sequence participant">
+          <title>实时通道 · SSE / WebSocket / Mux · Sequence participant</title>
+          <rect x="667" y="72" width="86" height="54" rx="6" class="c-mask"/>
+          <rect x="667" y="72" width="86" height="54" rx="6" class="c-messagebus" stroke-width="1.5"/>
+          <g aria-hidden="true" data-semantic-sigil="messagebus" class="semantic-sigil s-messagebus" transform="translate(673 78) scale(0.6875)">
+            <path d="M2.5 4.5h11M2.5 8h11M2.5 11.5h11"/>
+            <circle cx="5" cy="4.5" r="1" class="sigil-fill"/>
+            <circle cx="10.5" cy="8" r="1" class="sigil-fill"/>
+            <circle cx="7" cy="11.5" r="1" class="sigil-fill"/>
+          </g>
+          <text data-detail-anchor x="710" y="94" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">实时通道</text>
+          <text data-detail="context" x="710" y="111" class="t-muted" font-size="6.1" text-anchor="middle">SSE / WebSocket / Mux</text>
+        </g>
+
+        <!-- Legend -->
+        <g data-legend>
+          <text x="40" y="1246" class="t-primary" font-size="10" font-weight="600">Legend</text>
+          <g data-legend-semantic-kind="emphasis" data-legend-x="40" data-legend-baseline="1266" data-legend-width="78">
+            <path d="M 40 1263 L 74 1263" class="a-emphasis" stroke-width="1.8" marker-end="url(#arrowhead-emphasis)"/>
+            <text x="83" y="1266" class="t-muted" font-size="8">request</text>
+          </g>
+          <g data-legend-semantic-kind="return" data-legend-x="140" data-legend-baseline="1266" data-legend-width="73">
+            <path d="M 140 1263 L 174 1263" class="a-default" stroke-width="1.4" stroke-dasharray="3,5" marker-end="url(#arrowhead)"/>
+            <text x="183" y="1266" class="t-muted" font-size="8">return</text>
+          </g>
+          <g data-legend-semantic-kind="security" data-legend-x="235" data-legend-baseline="1266" data-legend-width="83">
+            <path d="M 235 1263 L 269 1263" class="a-security" stroke-width="1.4" marker-end="url(#arrowhead-security)"/>
+            <text x="278" y="1266" class="t-muted" font-size="8">security</text>
+          </g>
+          <g data-legend-semantic-kind="dashed" data-legend-x="340" data-legend-baseline="1266" data-legend-width="98">
+            <path d="M 340 1263 L 374 1263" class="a-dashed" stroke-width="1.4" marker-end="url(#arrowhead-dashed)"/>
+            <text x="383" y="1266" class="t-muted" font-size="8">async trace</text>
+          </g>
+          <g data-legend-semantic-kind="default" data-legend-x="460" data-legend-baseline="1266" data-legend-width="118">
+            <path d="M 460 1263 L 494 1263" class="a-default" stroke-width="1.4" marker-end="url(#arrowhead)"/>
+            <text x="503" y="1266" class="t-muted" font-size="8">default message</text>
+          </g>
+        </g>
+      </svg>

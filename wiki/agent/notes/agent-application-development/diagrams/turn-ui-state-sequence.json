@@ -1,0 +1,96 @@
+{
+  "schema_version": 1,
+  "diagram_type": "sequence",
+  "meta": {
+    "title": "一次 Turn：前端与后端如何一起完成",
+    "subtitle": "把“发送消息、运行、工具、审批、重连、结束”放在同一条时间线上",
+    "output": "turn-ui-state-sequence.html",
+    "visual_preset": "signal-flow",
+    "quality_profile": "showcase",
+    "views": [
+      {
+        "id": "happy-path",
+        "label": "正常完成",
+        "focus": ["user", "ui", "api", "run", "stream", "store", "sandbox"],
+        "note": "从用户发送到前端显示最终答案。"
+      },
+      {
+        "id": "approval-path",
+        "label": "审批暂停",
+        "focus": ["run", "stream", "ui", "api"],
+        "note": "工具需要许可时，Turn 暂停但没有消失。"
+      },
+      {
+        "id": "reconnect-path",
+        "label": "断线重连",
+        "focus": ["ui", "stream", "store"],
+        "note": "前端重新拿快照，再继续接收增量。"
+      }
+    ],
+    "viewBox": [1280, 1320]
+  },
+  "participants": [
+    { "id": "user", "type": "external", "label": "用户", "sublabel": "说一句话" },
+    { "id": "ui", "type": "frontend", "label": "前端会话", "sublabel": "本地状态 + 消息列表" },
+    { "id": "api", "type": "backend", "label": "控制面 API", "sublabel": "接收命令、校验权限" },
+    { "id": "store", "type": "database", "label": "事实存储", "sublabel": "Session / Run / Event" },
+    { "id": "run", "type": "backend", "label": "Agent Runtime", "sublabel": "推理、工具、审批" },
+    { "id": "sandbox", "type": "cloud", "label": "Sandbox", "sublabel": "Harness 执行命令" },
+    { "id": "stream", "type": "messagebus", "label": "实时通道", "sublabel": "SSE / WebSocket / Mux" }
+  ],
+  "activations": [
+    { "participant": "ui", "from": 180, "to": 1230, "type": "frontend" },
+    { "participant": "api", "from": 250, "to": 1090, "type": "backend" },
+    { "participant": "run", "from": 390, "to": 1130, "type": "backend" },
+    { "participant": "stream", "from": 430, "to": 1250, "type": "messagebus" }
+  ],
+  "messages": [
+    { "id": "send", "from": "user", "to": "ui", "y": 190, "label": "① 输入一句话", "variant": "emphasis", "note": "用户只关心“我说的话有没有被接收”。" },
+    { "id": "post", "from": "ui", "to": "api", "y": 250, "label": "② POST /chat（带幂等键）", "variant": "default" },
+    { "id": "accepted", "from": "api", "to": "store", "y": 310, "label": "③ 先写入 accepted / user message", "variant": "emphasis", "note": "先记事实，避免网络断开后消息凭空消失。" },
+    { "id": "enqueue", "from": "api", "to": "run", "y": 370, "label": "④ 创建或复用 Turn / Run", "variant": "default" },
+    { "id": "running", "from": "run", "to": "stream", "y": 430, "label": "⑤ session.status = running", "variant": "emphasis" },
+    { "id": "running-ui", "from": "stream", "to": "ui", "y": 490, "label": "⑥ 前端显示 Working…", "variant": "return", "note": "服务端状态与前端 loading 不是同一个变量。" },
+    { "id": "tool-call", "from": "run", "to": "sandbox", "y": 560, "label": "⑦ 需要工具：执行命令 / 读文件", "variant": "default" },
+    { "id": "tool-result", "from": "sandbox", "to": "run", "y": 630, "label": "⑧ 返回结构化结果 + 产物引用", "variant": "return" },
+    { "id": "delta", "from": "run", "to": "stream", "y": 700, "label": "⑨ assistant delta / tool event", "variant": "default" },
+    { "id": "delta-ui", "from": "stream", "to": "ui", "y": 760, "label": "⑩ 前端增量渲染", "variant": "return" },
+    { "id": "approval", "from": "run", "to": "stream", "y": 830, "label": "⑪ 需要审批：暂停当前 tool call", "variant": "security", "note": "暂停不是失败，也不是新 Turn。" },
+    { "id": "approval-ui", "from": "stream", "to": "ui", "y": 890, "label": "⑫ 前端显示审批卡片", "variant": "return" },
+    { "id": "approval-answer", "from": "ui", "to": "api", "y": 950, "label": "⑬ 用户批准 / 拒绝", "variant": "security" },
+    { "id": "resume", "from": "api", "to": "run", "y": 1010, "label": "⑭ 用原 tool_call_id 恢复", "variant": "emphasis" },
+    { "id": "final", "from": "run", "to": "store", "y": 1070, "label": "⑮ 写入最终事件与 usage", "variant": "emphasis" },
+    { "id": "done", "from": "run", "to": "stream", "y": 1130, "label": "⑯ status = idle / waiting / failed", "variant": "default" },
+    { "id": "done-ui", "from": "stream", "to": "ui", "y": 1160, "label": "⑰ 收口消息、停止计时器", "variant": "return" },
+    { "id": "reconnect", "from": "ui", "to": "stream", "y": 1210, "label": "断线后：重订阅并取快照", "variant": "dashed", "note": "先快照，再按 cursor/seq 接增量。" }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "先记事实，再发实时消息",
+      "items": [
+        "前端看到的 Working 只是投影，不是事实源",
+        "消息、工具和终态应先能在存储中恢复",
+        "实时通道断开后，快照可以重新补齐"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "等待不是结束",
+      "items": [
+        "审批等待保留原来的 Turn 和 tool_call_id",
+        "后台任务仍在运行时，Session 可能是 waiting",
+        "用户恢复的是同一次执行，而不是重新提问"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "小心重复与断线",
+      "items": [
+        "accepted、cursor、event_id 要能去重",
+        "前端乐观消息要等 consumed/committed 再收口",
+        "断线重连不应该让工具副作用再次发生"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,57 @@
+{
+  "schema_version": 1,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "Harness 与 Agent Runtime 的一次执行",
+    "subtitle": "控制面负责解析和调度，Runtime 负责模型—工具循环，事件适配器把执行结果归一化",
+    "output": "module-harness-runtime-execution.html",
+    "animation": "none",
+    "visual_preset": "signal-flow",
+    "quality_profile": "showcase",
+    "views": [
+      { "id": "control-runtime", "label": "控制面到 Runtime", "focus": ["turn_request", "resolve_runtime", "prepare_session", "run_loop", "normalize_event", "turn_result"], "note": "主路径说明职责交接，而不是要求组件必须分进程。" },
+      { "id": "tool-round", "label": "模型与工具循环", "focus": ["run_loop", "model_call", "tool_call", "normalize_event"], "note": "一次 Turn 可以包含多个模型请求与工具调用。" },
+      { "id": "interrupt-resume", "label": "中断与恢复", "focus": ["checkpoint", "run_loop", "turn_result"], "note": "审批、取消和进程退出都要求 Runtime 暴露可恢复状态。" }
+    ],
+    "viewBox": [1060, 900]
+  },
+  "lanes": [
+    { "id": "control", "label": "应用控制面" },
+    { "id": "adapter", "label": "Harness / Runtime Adapter" },
+    { "id": "runtime", "label": "Agent Runtime" },
+    { "id": "model_tools", "label": "模型与工具" },
+    { "id": "state", "label": "状态与事件" }
+  ],
+  "phases": [
+    { "id": "dispatch", "label": "解析与调度", "fromCol": 0, "toCol": 2 },
+    { "id": "execute", "label": "多步执行", "fromCol": 3, "toCol": 4, "variant": "emphasis" },
+    { "id": "return", "label": "归一化与返回", "fromCol": 5, "toCol": 5, "variant": "dashed" }
+  ],
+  "mainPath": ["turn_request", "resolve_runtime", "prepare_session", "run_loop", "normalize_event", "turn_result"],
+  "nodes": [
+    { "id": "turn_request", "lane": "control", "col": 0, "type": "frontend", "label": "Turn 请求", "sublabel": "Session · Actor · Input" },
+    { "id": "resolve_runtime", "lane": "control", "col": 1, "type": "backend", "label": "解析 Runtime", "sublabel": "配置、权限与作用域" },
+    { "id": "turn_result", "lane": "control", "col": 5, "type": "backend", "label": "Turn 结果", "sublabel": "完成 · 等待 · 失败" },
+    { "id": "prepare_session", "lane": "adapter", "col": 2, "type": "messagebus", "label": "准备运行会话", "sublabel": "参数、目录与进程" },
+    { "id": "normalize_event", "lane": "adapter", "col": 4, "type": "messagebus", "label": "归一化事件", "sublabel": "Runtime 协议 → 应用事件" },
+    { "id": "run_loop", "lane": "runtime", "col": 3, "type": "backend", "label": "Agent Loop", "sublabel": "上下文、步骤与终止条件" },
+    { "id": "model_call", "lane": "model_tools", "col": 2, "type": "cloud", "label": "模型请求", "sublabel": "Message / Stream" },
+    { "id": "tool_call", "lane": "model_tools", "col": 4, "type": "backend", "label": "工具调用", "sublabel": "校验 · 审批 · 执行" },
+    { "id": "checkpoint", "lane": "state", "col": 5, "type": "database", "label": "Checkpoint", "sublabel": "中断、恢复与审计" }
+  ],
+  "edges": [
+    { "id": "request-resolve", "from": "turn_request", "to": "resolve_runtime" },
+    { "id": "resolve-prepare", "from": "resolve_runtime", "to": "prepare_session", "fromSide": "bottom", "toSide": "top", "channelY": 211 },
+    { "id": "prepare-loop", "from": "prepare_session", "to": "run_loop", "variant": "emphasis" },
+    { "id": "loop-normalize", "from": "run_loop", "to": "normalize_event", "variant": "emphasis" },
+    { "id": "normalize-result", "from": "normalize_event", "to": "turn_result" },
+    { "id": "loop-model", "from": "run_loop", "to": "model_call", "fromSide": "bottom", "toSide": "top", "variant": "dashed" },
+    { "id": "model-tool", "from": "model_call", "to": "tool_call", "variant": "dashed" },
+    { "id": "tool-loop", "from": "tool_call", "to": "run_loop", "fromSide": "top", "toSide": "bottom", "variant": "dashed", "role": "return" },
+    { "id": "normalize-checkpoint", "from": "normalize_event", "to": "checkpoint", "fromSide": "bottom", "toSide": "top", "variant": "dashed" }
+  ],
+  "cards": [
+    { "dot": "cyan", "title": "真正的边界", "items": ["控制面决定谁、在哪个 Session 中执行", "Adapter 隔离具体 Harness 协议", "Runtime 内部拥有模型—工具循环"] },
+    { "dot": "amber", "title": "四项目差异", "items": ["QM 用 Harness Router 适配外部 Runtime", "Omnigent 把 Harness 放进 Runner 子进程", "DSH 用 Cordis 服务组合循环", "AI Manus 主要在同一后端内运行 Native Harness"] }
+  ]
+}

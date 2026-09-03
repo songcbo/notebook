@@ -1,0 +1,67 @@
+{
+  "schema_version": 1,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "Agent 工具调用与审批控制权",
+    "subtitle": "Runtime 提出意图，应用层完成策略、人工决策、执行与结果持久化",
+    "output": "tool-approval-flow.html",
+    "animation": "none",
+    "visual_preset": "signal-flow",
+    "quality_profile": "showcase",
+    "viewBox": [980, 980],
+    "views": [
+      { "id": "happy-path", "label": "获批主路径", "focus": ["schema", "model-call", "dispatch", "policy", "approval", "execute", "result", "continue"], "note": "模型只提出结构化调用；真正的许可、执行与结果记录由外层应用控制。" },
+      { "id": "decision-path", "label": "审批分支", "focus": ["policy", "approval", "denied", "pending"], "note": "策略可自动允许、拒绝，或把高风险调用暂停为持久审批。" },
+      { "id": "evidence-path", "label": "事实记录", "focus": ["pending", "execute", "result", "audit"], "note": "待审批状态、Tool Result 与审计事件需要成为可恢复事实。" }
+    ]
+  },
+  "lanes": [
+    { "id": "runtime", "label": "Agent Runtime" },
+    { "id": "application", "label": "Application / Harness" },
+    { "id": "human", "label": "Human Approval" },
+    { "id": "exceptions", "label": "Rejected / Waiting", "variant": "exception" },
+    { "id": "execution", "label": "Tool Execution" },
+    { "id": "state", "label": "Durable State" }
+  ],
+  "phases": [
+    { "id": "intent", "label": "Expose + request", "fromCol": 0, "toCol": 1 },
+    { "id": "govern", "label": "Normalize + govern", "fromCol": 2, "toCol": 3, "variant": "security" },
+    { "id": "complete", "label": "Execute + continue", "fromCol": 4, "toCol": 5, "variant": "emphasis" }
+  ],
+  "groups": [
+    { "id": "control-group", "label": "Application authority", "lane": "application", "fromCol": 2, "toCol": 5, "variant": "emphasis" },
+    { "id": "decision-group", "label": "Policy or human stop", "lane": "human", "fromCol": 3, "toCol": 4, "variant": "security" },
+    { "id": "execution-group", "label": "Trusted execution boundary", "lane": "execution", "fromCol": 4, "toCol": 5, "variant": "dashed" }
+  ],
+  "mainPath": ["schema", "model-call", "dispatch", "policy", "approval", "execute", "result", "continue"],
+  "nodes": [
+    { "id": "schema", "lane": "runtime", "col": 0, "type": "backend", "label": "Tool Schema", "sublabel": "可见能力" },
+    { "id": "model-call", "lane": "runtime", "col": 1, "type": "external", "label": "Tool Call", "sublabel": "name + arguments" },
+    { "id": "continue", "lane": "runtime", "col": 5, "type": "backend", "label": "Continue Loop", "sublabel": "consume Tool Result" },
+    { "id": "dispatch", "lane": "application", "col": 2, "type": "backend", "label": "Dispatch", "sublabel": "校验并解析工具" },
+    { "id": "policy", "lane": "application", "col": 3, "type": "security", "label": "Policy Gate", "sublabel": "allow · ask · deny", "tag": "authoritative" },
+    { "id": "result", "lane": "application", "col": 5, "type": "backend", "label": "Tool Result", "sublabel": "structured outcome" },
+    { "id": "approval", "lane": "human", "col": 3, "type": "security", "label": "Approval", "sublabel": "暂停并询问用户" },
+    { "id": "denied", "lane": "exceptions", "col": 5, "type": "security", "label": "Denied", "sublabel": "拒绝或取消" },
+    { "id": "execute", "lane": "execution", "col": 4, "type": "cloud", "label": "Execute Tool", "sublabel": "Sandbox · MCP · API" },
+    { "id": "pending", "lane": "state", "col": 3, "type": "database", "label": "Pending", "sublabel": "可恢复审批状态" },
+    { "id": "audit", "lane": "state", "col": 5, "type": "database", "label": "Audit Log", "sublabel": "decision + result" }
+  ],
+  "edges": [
+    { "id": "schema-call", "from": "schema", "to": "model-call", "role": "main" },
+    { "id": "call-dispatch", "from": "model-call", "to": "dispatch", "label": "structured intent", "variant": "emphasis", "role": "main", "fromSide": "bottom", "toSide": "top", "route": "drop", "labelSegment": 1 },
+    { "id": "dispatch-policy", "from": "dispatch", "to": "policy", "role": "main" },
+    { "id": "policy-approval", "from": "policy", "to": "approval", "label": "ask user", "variant": "security", "role": "main", "fromSide": "bottom", "toSide": "top", "route": "drop", "labelDx": 42, "labelDy": 12 },
+    { "id": "approval-execute", "from": "approval", "to": "execute", "variant": "emphasis", "role": "main" },
+    { "id": "approval-denied", "from": "approval", "to": "denied", "label": "denied", "variant": "security", "role": "error", "fromSide": "right", "toSide": "left" },
+    { "id": "approval-pending", "from": "approval", "to": "pending", "variant": "dashed", "role": "async", "fromSide": "bottom", "toSide": "top", "route": "drop" },
+    { "id": "execute-result", "from": "execute", "to": "result", "variant": "emphasis", "role": "main", "fromSide": "right", "toSide": "right", "route": "outside-right" },
+    { "id": "result-continue", "from": "result", "to": "continue", "variant": "emphasis", "role": "return", "fromSide": "top", "toSide": "bottom", "route": "up-channel" },
+    { "id": "result-audit", "from": "result", "to": "audit", "variant": "dashed", "role": "async", "fromSide": "right", "toSide": "right", "route": "outside-right" }
+  ],
+  "cards": [
+    { "dot": "cyan", "title": "控制权", "items": ["Runtime 看到工具并提出调用意图", "Application/Harness 校验、决策并执行", "人类审批是可暂停、可恢复的运行状态"] },
+    { "dot": "rose", "title": "常见错误", "items": ["Runtime 与应用各保存一份审批状态", "只保存聊天文本，无法恢复未完成 Tool Call", "拒绝或执行错误没有形成明确 Tool Result"] },
+    { "dot": "violet", "title": "四项目映射", "items": ["QM：ToolContext + Approval Gate", "Omnigent：Runner/Server Policy + TurnContext", "DSH：Tool Waterfall + Approval Service", "AI Manus：AgentBase + ToolManager + Approval Workflow"] }
+  ]
+}

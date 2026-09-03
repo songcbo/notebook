@@ -1,0 +1,79 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Agent 应用的状态平面与执行平面",
+    "subtitle": "把运行时临时状态、持久事实、实时传输与 Sandbox 分开观察",
+    "output": "module-state-execution-planes.html",
+    "animation": "none",
+    "visual_preset": "blueprint",
+    "quality_profile": "showcase",
+    "views": [
+      {
+        "id": "execution-plane",
+        "label": "执行平面",
+        "focus": ["control_core", "agent_runtime", "sandbox_workspace", "runtime_cache"],
+        "note": "执行实例可以重建，Sandbox 和 Workspace 是否保留取决于产品边界。"
+      },
+      {
+        "id": "durable-plane",
+        "label": "持久状态",
+        "focus": ["control_core", "event_log", "relational_state", "object_store", "audit_store"],
+        "note": "业务状态、事件、文件二进制和审计分别选择合适的存储。"
+      },
+      {
+        "id": "delivery-plane",
+        "label": "实时交付",
+        "focus": ["agent_runtime", "live_bus", "event_log"],
+        "note": "实时通道服务低延迟，持久事件负责恢复与重放。"
+      }
+    ],
+    "viewBox": [1280, 760]
+  },
+  "layout": {
+    "mode": "grid",
+    "origin": [60, 90],
+    "cols": 5,
+    "gapX": 70,
+    "gapY": 76,
+    "cellW": 176,
+    "cellH": 86
+  },
+  "components": [
+    { "id": "control_core", "type": "backend", "label": "应用控制面", "sublabel": "Session / Turn / Policy", "row": 1, "col": 0 },
+    { "id": "agent_runtime", "type": "backend", "label": "Agent Runtime", "sublabel": "Loop / Harness / Runner", "row": 1, "col": 1 },
+    { "id": "sandbox_workspace", "type": "cloud", "label": "Sandbox + Workspace", "sublabel": "文件、进程与终端", "row": 1, "col": 2 },
+    { "id": "runtime_cache", "type": "messagebus", "label": "运行时临时状态", "sublabel": "队列、订阅者、实例缓存", "row": 0, "col": 1 },
+    { "id": "live_bus", "type": "messagebus", "label": "实时传输", "sublabel": "SSE / WebSocket / Stream", "row": 0, "col": 3 },
+    { "id": "event_log", "type": "database", "label": "事件与会话历史", "sublabel": "追加记录 / Conversation Items", "row": 2, "col": 1 },
+    { "id": "relational_state", "type": "database", "label": "关系状态", "sublabel": "Session、Agent、租约与策略", "row": 2, "col": 2 },
+    { "id": "object_store", "type": "database", "label": "对象与制品", "sublabel": "上传文件、Artifact、Skill 包", "row": 2, "col": 3 },
+    { "id": "audit_store", "type": "security", "label": "审计与可观测证据", "sublabel": "调用、成本、错误与 Trace", "row": 1, "col": 4 }
+  ],
+  "boundaries": [
+    { "kind": "region", "label": "可重建执行平面", "wraps": ["control_core", "agent_runtime", "sandbox_workspace", "runtime_cache", "live_bus"] },
+    { "kind": "security-group", "label": "持久事实平面", "wraps": ["event_log", "relational_state", "object_store", "audit_store"] }
+  ],
+  "connections": [
+    { "id": "control_runtime", "from": "control_core", "to": "agent_runtime", "label": "dispatch", "variant": "emphasis" },
+    { "id": "runtime_sandbox", "from": "agent_runtime", "to": "sandbox_workspace", "variant": "emphasis" },
+    { "id": "runtime_cache_link", "from": "agent_runtime", "to": "runtime_cache", "variant": "dashed" },
+    { "id": "runtime_live", "from": "agent_runtime", "to": "live_bus", "label": "delta", "variant": "dashed" },
+    { "id": "control_events", "from": "control_core", "to": "event_log", "label": "append" },
+    { "id": "sandbox_objects", "from": "sandbox_workspace", "to": "object_store", "variant": "dashed" },
+    { "id": "event_recovery", "from": "event_log", "to": "agent_runtime", "label": "rebuild", "variant": "security" },
+    { "id": "sandbox_audit", "from": "sandbox_workspace", "to": "audit_store", "variant": "dashed" }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "不要混为一个“数据库”",
+      "items": ["关系状态适合事务与约束", "事件历史适合重放和投影", "大文件二进制适合对象存储"]
+    },
+    {
+      "dot": "amber",
+      "title": "恢复判断",
+      "items": ["先确定哪个状态是事实源", "再决定哪些进程内对象可以重建", "实时消息不能替代持久提交"]
+    }
+  ]
+}

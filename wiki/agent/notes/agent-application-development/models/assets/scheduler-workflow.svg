@@ -1,0 +1,175 @@
+<svg viewBox="0 0 1180 920" role="img" aria-labelledby="archify-diagram-title archify-diagram-description" data-preset="signal-flow" data-quality-profile="showcase">
+        <title id="archify-diagram-title">定时任务：从钟表到一次 Agent 运行</title>
+        <desc id="archify-diagram-description">触发不是执行；要经过校验、排队、运行、交付和历史记录</desc>
+        <!-- Definitions -->
+        <defs>
+          <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" class="m-default" />
+          </marker>
+          <marker id="arrowhead-emphasis" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" class="m-emphasis" />
+          </marker>
+          <marker id="arrowhead-security" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" class="m-security" />
+          </marker>
+          <marker id="arrowhead-dashed" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" class="m-dashed" />
+          </marker>
+          <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+            <path d="M 40 0 L 0 0 0 40" class="c-grid" stroke-width="0.5"/>
+          </pattern>
+        </defs>
+
+        <!-- Background Grid -->
+        <rect width="100%" height="100%" fill="url(#grid)" />
+
+        <!-- Swimlanes -->
+        <rect data-graph-role="structural-frame" data-composition-frame-kind="lane" data-composition-frame-id="lane-0" x="40" y="52" width="640" height="104" rx="10" class="c-lane" stroke-width="1"/>
+        <text x="54" y="74" class="t-dim" font-size="10" font-weight="600">01 / 每次触发的主路径</text>
+
+        <rect data-graph-role="structural-frame" data-composition-frame-kind="lane" data-composition-frame-id="lane-1" x="40" y="176" width="640" height="104" rx="10" class="c-lane" stroke-width="1"/>
+        <text x="54" y="198" class="t-dim" font-size="10" font-weight="600">02 / 策略判断</text>
+
+        <rect data-graph-role="structural-frame" data-composition-frame-kind="lane" data-composition-frame-id="lane-2" x="40" y="300" width="640" height="104" rx="10" class="c-lane" stroke-width="1"/>
+        <text x="54" y="322" class="t-dim" font-size="10" font-weight="600">03 / Runtime</text>
+
+        <rect data-graph-role="structural-frame" data-composition-frame-kind="lane" data-composition-frame-id="lane-3" x="40" y="424" width="640" height="104" rx="10" class="c-lane" stroke-width="1"/>
+        <text x="54" y="446" class="t-dim" font-size="10" font-weight="600">04 / 结果记录</text>
+
+        <!-- Phase headers -->
+        <line x1="42" y1="35" x2="266" y2="35" class="a-emphasis" stroke-width="1.1"/>
+        <rect x="42" y="27" width="224" height="16" rx="4" class="c-mask"/>
+        <text x="154" y="39" class="t-backend" font-size="8" font-weight="600" text-anchor="middle">触发</text>
+        <line x1="254" y1="35" x2="476" y2="35" class="a-default" stroke-width="1.1"/>
+        <rect x="254" y="27" width="222" height="16" rx="4" class="c-mask"/>
+        <text x="365" y="39" class="t-muted" font-size="8" font-weight="600" text-anchor="middle">准入</text>
+        <line x1="454" y1="35" x2="671" y2="35" class="a-dashed" stroke-width="1.1"/>
+        <rect x="454" y="27" width="217" height="16" rx="4" class="c-mask"/>
+        <text x="562.5" y="39" class="t-messagebus" font-size="8" font-weight="600" text-anchor="middle">执行与记录</text>
+
+        <!-- Workflow groups -->
+        <rect data-graph-role="structural-frame" data-composition-frame-kind="group" data-composition-frame-id="group-0" x="250" y="214" width="230" height="58" rx="9" class="c-security-group" stroke-width="1"/>
+        <text x="260" y="228" class="t-security" font-size="7" font-weight="600">先检查再启动</text>
+        <rect data-graph-role="structural-frame" data-composition-frame-kind="group" data-composition-frame-id="group-1" x="450" y="338" width="225" height="58" rx="9" class="c-lane" stroke-width="1"/>
+        <text x="460" y="352" class="t-messagebus" font-size="7" font-weight="600">普通 Agent 运行</text>
+
+        <!-- Edge paths -->
+        <path data-edge-from="schedule" data-edge-to="clock" data-edge-key="0" data-edge-id="clock-edge" data-composition-points="134,119;174,119" d="M 134 119 L 174 119" class="a-emphasis" stroke-width="1.8" marker-end="url(#arrowhead-emphasis)"/>
+        <path data-edge-from="clock" data-edge-to="validate" data-edge-key="1" data-edge-id="check-edge" data-composition-points="220,145;220,215;300,215;300,277" d="M 220 145 L 220 215 L 300 215 L 300 277" class="a-default" stroke-width="1.4" marker-end="url(#arrowhead)"/>
+        <path data-edge-from="validate" data-edge-to="enqueue" data-edge-label="通过" data-edge-key="2" data-edge-id="admit-edge" data-composition-points="346,243;346,166;384,166;384,119" d="M 346 243 L 346 166 L 384 166 L 384 119" class="a-emphasis" stroke-width="1.8" marker-end="url(#arrowhead-emphasis)"/>
+        <path data-edge-from="enqueue" data-edge-to="execute" data-edge-label="启动 Runtime" data-edge-key="3" data-edge-id="start-edge" data-composition-points="476,119;476,228;454,228;454,367" d="M 476 119 L 476 228 L 454 228 L 454 367" class="a-default" stroke-width="1.4" marker-end="url(#arrowhead)"/>
+        <path data-edge-from="execute" data-edge-to="record" data-edge-label="完成并记录" data-edge-key="4" data-edge-id="record-edge" data-composition-points="546,367;546,414;579,414;579,491" d="M 546 367 L 546 414 L 579 414 L 579 491" class="a-emphasis" stroke-width="1.8" marker-end="url(#arrowhead-emphasis)"/>
+
+        <!-- Nodes -->
+        <g id="node-schedule" data-node-id="schedule" data-node-label="已排程" tabindex="0" role="button" aria-label="Focus 已排程, cron / RRULE + 时区, 每次触发的主路径 › 触发" aria-pressed="false" data-node-kind="database" data-node-sublabel="cron / RRULE + 时区" data-node-tag="durable" data-node-context="每次触发的主路径 › 触发">
+          <title>已排程 · cron / RRULE + 时区 · 每次触发的主路径 › 触发 · durable</title>
+          <rect x="42" y="85" width="92" height="68" rx="6" class="c-mask"/>
+          <rect x="42" y="85" width="92" height="68" rx="6" class="c-database" stroke-width="1.5"/>
+          <g aria-hidden="true" data-semantic-sigil="database" class="semantic-sigil s-database" transform="translate(48 91) scale(0.6875)">
+            <ellipse cx="8" cy="4" rx="5" ry="2"/>
+            <path d="M3 4v8c0 1.1 2.2 2 5 2s5-.9 5-2V4M3 8c0 1.1 2.2 2 5 2s5-.9 5-2"/>
+          </g>
+          <text data-detail-anchor x="88" y="106" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">已排程</text>
+          <text data-detail="context" x="88" y="123" class="t-muted" font-size="7.3" text-anchor="middle">cron / RRULE + 时区</text>
+        <text data-detail="fine" x="88" y="141" class="t-database" font-size="7" text-anchor="middle">durable</text>
+        </g>
+
+        <g id="node-clock" data-node-id="clock" data-node-label="到点" tabindex="0" role="button" aria-label="Focus 到点, 时钟叫醒任务, 每次触发的主路径 › 触发" aria-pressed="false" data-node-kind="backend" data-node-sublabel="时钟叫醒任务" data-node-context="每次触发的主路径 › 触发">
+          <title>到点 · 时钟叫醒任务 · 每次触发的主路径 › 触发</title>
+          <rect x="174" y="93" width="92" height="52" rx="6" class="c-mask"/>
+          <rect x="174" y="93" width="92" height="52" rx="6" class="c-backend" stroke-width="1.5"/>
+          <g aria-hidden="true" data-semantic-sigil="backend" class="semantic-sigil s-backend" transform="translate(180 99) scale(0.6875)">
+            <path d="M6 3 3 8l3 5M10 3l3 5-3 5"/>
+          </g>
+          <text data-detail-anchor x="220" y="114" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">到点</text>
+          <text data-detail="context" x="220" y="131" class="t-muted" font-size="8" text-anchor="middle">时钟叫醒任务</text>
+        </g>
+
+        <g id="node-validate" data-node-id="validate" data-node-label="重新校验" tabindex="0" role="button" aria-label="Focus 重新校验, 权限 / Host / Workspace, 策略判断 › 先检查再启动 › 准入" aria-pressed="false" data-node-kind="security" data-node-sublabel="权限 / Host / Workspace" data-node-tag="gate" data-node-context="策略判断 › 先检查再启动 › 准入">
+          <title>重新校验 · 权限 / Host / Workspace · 策略判断 › 先检查再启动 › 准入 · gate</title>
+          <rect x="254" y="209" width="92" height="68" rx="6" class="c-mask"/>
+          <rect x="254" y="209" width="92" height="68" rx="6" class="c-security" stroke-width="1.5"/>
+          <g aria-hidden="true" data-semantic-sigil="security" class="semantic-sigil s-security" transform="translate(260 215) scale(0.6875)">
+            <path d="M8 2.2 13 4v3.5c0 3.1-1.8 5.4-5 6.5-3.2-1.1-5-3.4-5-6.5V4Z"/>
+            <path d="m5.8 8 1.5 1.5 3-3"/>
+          </g>
+          <text data-detail-anchor x="300" y="230" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">重新校验</text>
+          <text data-detail="context" x="300" y="247" class="t-muted" font-size="6" text-anchor="middle">权限 / Host / Workspace</text>
+        <text data-detail="fine" x="300" y="265" class="t-security" font-size="7" text-anchor="middle">gate</text>
+        </g>
+
+        <g id="node-enqueue" data-node-id="enqueue" data-node-label="已入队" tabindex="0" role="button" aria-label="Focus 已入队, Run / Conversation, 每次触发的主路径 › 准入" aria-pressed="false" data-node-kind="messagebus" data-node-sublabel="Run / Conversation" data-node-context="每次触发的主路径 › 准入">
+          <title>已入队 · Run / Conversation · 每次触发的主路径 › 准入</title>
+          <rect x="384" y="93" width="92" height="52" rx="6" class="c-mask"/>
+          <rect x="384" y="93" width="92" height="52" rx="6" class="c-messagebus" stroke-width="1.5"/>
+          <g aria-hidden="true" data-semantic-sigil="messagebus" class="semantic-sigil s-messagebus" transform="translate(390 99) scale(0.6875)">
+            <path d="M2.5 4.5h11M2.5 8h11M2.5 11.5h11"/>
+            <circle cx="5" cy="4.5" r="1" class="sigil-fill"/>
+            <circle cx="10.5" cy="8" r="1" class="sigil-fill"/>
+            <circle cx="7" cy="11.5" r="1" class="sigil-fill"/>
+          </g>
+          <text data-detail-anchor x="430" y="114" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">已入队</text>
+          <text data-detail="context" x="430" y="131" class="t-muted" font-size="7.7" text-anchor="middle">Run / Conversation</text>
+        </g>
+
+        <g id="node-execute" data-node-id="execute" data-node-label="执行中" tabindex="0" role="button" aria-label="Focus 执行中, 普通 Agent Turn, Runtime › 普通 Agent 运行 › 执行与记录" aria-pressed="false" data-node-kind="backend" data-node-sublabel="普通 Agent Turn" data-node-context="Runtime › 普通 Agent 运行 › 执行与记录">
+          <title>执行中 · 普通 Agent Turn · Runtime › 普通 Agent 运行 › 执行与记录</title>
+          <rect x="454" y="341" width="92" height="52" rx="6" class="c-mask"/>
+          <rect x="454" y="341" width="92" height="52" rx="6" class="c-backend" stroke-width="1.5"/>
+          <g aria-hidden="true" data-semantic-sigil="backend" class="semantic-sigil s-backend" transform="translate(460 347) scale(0.6875)">
+            <path d="M6 3 3 8l3 5M10 3l3 5-3 5"/>
+          </g>
+          <text data-detail-anchor x="500" y="362" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">执行中</text>
+          <text data-detail="context" x="500" y="379" class="t-muted" font-size="8" text-anchor="middle">普通 Agent Turn</text>
+        </g>
+
+        <g id="node-record" data-node-id="record" data-node-label="结果记录" tabindex="0" role="button" aria-label="Focus 结果记录, 成功 / 失败 / 跳过, 结果记录 › 执行与记录" aria-pressed="false" data-node-kind="database" data-node-sublabel="成功 / 失败 / 跳过" data-node-tag="history" data-node-context="结果记录 › 执行与记录">
+          <title>结果记录 · 成功 / 失败 / 跳过 · 结果记录 › 执行与记录 · history</title>
+          <rect x="579" y="457" width="92" height="68" rx="6" class="c-mask"/>
+          <rect x="579" y="457" width="92" height="68" rx="6" class="c-database" stroke-width="1.5"/>
+          <g aria-hidden="true" data-semantic-sigil="database" class="semantic-sigil s-database" transform="translate(585 463) scale(0.6875)">
+            <ellipse cx="8" cy="4" rx="5" ry="2"/>
+            <path d="M3 4v8c0 1.1 2.2 2 5 2s5-.9 5-2V4M3 8c0 1.1 2.2 2 5 2s5-.9 5-2"/>
+          </g>
+          <text data-detail-anchor x="625" y="478" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">结果记录</text>
+          <text data-detail="context" x="625" y="495" class="t-muted" font-size="7.7" text-anchor="middle">成功 / 失败 / 跳过</text>
+        <text data-detail="fine" x="625" y="513" class="t-database" font-size="7" text-anchor="middle">history</text>
+        </g>
+
+        <!-- Edge labels -->
+
+
+        <g data-detail="context" data-edge-from="validate" data-edge-to="enqueue" data-edge-label="通过" data-edge-key="2" data-edge-id="admit-edge">
+          <rect x="350" y="146" width="30" height="14" rx="3" class="c-mask"/>
+          <text x="365" y="156" class="t-backend" font-size="8" text-anchor="middle">通过</text>
+        </g>
+        <g data-detail="context" data-edge-from="enqueue" data-edge-to="execute" data-edge-label="启动 Runtime" data-edge-key="3" data-edge-id="start-edge">
+          <rect x="431.2" y="208" width="67.6" height="14" rx="3" class="c-mask"/>
+          <text x="465" y="218" class="t-muted" font-size="8" text-anchor="middle">启动 Runtime</text>
+        </g>
+        <g data-detail="context" data-edge-from="execute" data-edge-to="record" data-edge-label="完成并记录" data-edge-key="4" data-edge-id="record-edge">
+          <rect x="533.5" y="394" width="58" height="14" rx="3" class="c-mask"/>
+          <text x="562.5" y="404" class="t-backend" font-size="8" text-anchor="middle">完成并记录</text>
+        </g>
+
+        <!-- Legend -->
+        <g data-legend data-legend-bridge>
+          <text x="20" y="552" class="t-primary" font-size="10" font-weight="600">Legend</text>
+          <g data-legend-semantic-kind="backend" data-legend-kind="backend" data-legend-label="Agent logic" data-legend-x="20" data-legend-baseline="572" data-legend-width="90">
+            <rect x="20" y="564" width="14" height="9" rx="2" class="c-backend" stroke-width="1"/>
+            <text x="41" y="572" class="t-muted" font-size="7">Agent logic</text>
+          </g>
+          <g data-legend-semantic-kind="security" data-legend-kind="security" data-legend-label="Policy" data-legend-x="117" data-legend-baseline="572" data-legend-width="69">
+            <rect x="117" y="564" width="14" height="9" rx="2" class="c-security" stroke-width="1"/>
+            <text x="138" y="572" class="t-muted" font-size="7">Policy</text>
+          </g>
+          <g data-legend-semantic-kind="messagebus" data-legend-kind="messagebus" data-legend-label="Tool action" data-legend-x="193" data-legend-baseline="572" data-legend-width="90">
+            <rect x="193" y="564" width="14" height="9" rx="2" class="c-messagebus" stroke-width="1"/>
+            <text x="214" y="572" class="t-muted" font-size="7">Tool action</text>
+          </g>
+          <g data-legend-semantic-kind="database" data-legend-kind="database" data-legend-label="Context / trace" data-legend-x="290" data-legend-baseline="572" data-legend-width="108">
+            <rect x="290" y="564" width="14" height="9" rx="2" class="c-database" stroke-width="1"/>
+            <text x="311" y="572" class="t-muted" font-size="7">Context / trace</text>
+          </g>
+        </g>
+      </svg>

@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "diagram_type": "dataflow",
+  "meta": {
+    "title": "附件和产物：文件怎样穿过 Agent 应用",
+    "subtitle": "浏览器临时文件、Session 事实、Sandbox 路径和可下载 Artifact 不是同一个东西",
+    "output": "attachment-artifact-flow.html",
+    "visual_preset": "editorial",
+    "quality_profile": "showcase",
+    "views": [
+      { "id": "input", "label": "用户输入文件", "focus": ["draft", "upload", "event", "sandbox"], "note": "先保存和校验，再让 Agent 看见文件。" },
+      { "id": "output", "label": "Agent 产物", "focus": ["sandbox", "output", "artifact", "metadata"], "note": "Sandbox 内路径最终要变成稳定的产物引用。" },
+      { "id": "client", "label": "前端展示", "focus": ["artifact", "preview", "download"], "note": "前端拿引用和元数据，不依赖远程机器的绝对路径。" }
+    ],
+    "viewBox": [1220, 820]
+  },
+  "stages": [
+    { "label": "浏览器" },
+    { "label": "控制面" },
+    { "label": "Sandbox" },
+    { "label": "持久存储" },
+    { "label": "前端展示" }
+  ],
+  "nodes": [
+    { "id": "draft", "type": "frontend", "label": "临时草稿", "sublabel": "File / Blob URL", "stage": 0, "row": 0, "tag": "not durable" },
+    { "id": "upload", "type": "backend", "label": "上传准入", "sublabel": "大小 / 类型 / 权限", "stage": 1, "row": 0 },
+    { "id": "event", "type": "database", "label": "用户事件", "sublabel": "只保存稳定引用", "stage": 1, "row": 2, "tag": "fact" },
+    { "id": "sandbox", "type": "cloud", "label": "Sandbox 文件", "sublabel": "Agent 可读路径", "stage": 2, "row": 0 },
+    { "id": "output", "type": "messagebus", "label": "产物输出", "sublabel": "文件 / 日志 / 图片", "stage": 2, "row": 2 },
+    { "id": "artifact", "type": "cloud", "label": "Artifact Store", "sublabel": "不可变 ID / URL", "stage": 3, "row": 0, "tag": "durable bytes" },
+    { "id": "metadata", "type": "database", "label": "文件元数据", "sublabel": "Session 关系 + 尺寸", "stage": 3, "row": 2 },
+    { "id": "preview", "type": "frontend", "label": "预览卡片", "sublabel": "名称 / 类型 / 大小", "stage": 4, "row": 0 },
+    { "id": "download", "type": "frontend", "label": "下载 / 分享", "sublabel": "授权后取文件", "stage": 4, "row": 2 }
+  ],
+  "flows": [
+    { "id": "draft-upload", "from": "draft", "to": "upload", "label": "上传", "classification": "untrusted bytes", "variant": "emphasis" },
+    { "id": "upload-event", "from": "upload", "to": "event", "label": "引用 + 元数据", "classification": "session fact", "variant": "default", "route": "vertical-channel", "channelX": 360 },
+    { "id": "upload-sandbox", "from": "upload", "to": "sandbox", "label": "同步输入文件", "classification": "runtime path", "variant": "default" },
+    { "id": "sandbox-output", "from": "sandbox", "to": "output", "label": "生成产物", "classification": "runtime output", "variant": "dashed", "route": "vertical-channel", "channelX": 575 },
+    { "id": "sandbox-artifact", "from": "sandbox", "to": "artifact", "label": "上传字节", "classification": "durable bytes", "variant": "emphasis" },
+    { "id": "output-metadata", "from": "output", "to": "metadata", "label": "文件关系", "classification": "database record", "variant": "default" },
+    { "id": "artifact-preview", "from": "artifact", "to": "preview", "label": "引用", "classification": "read", "variant": "default" },
+    { "id": "metadata-download", "from": "metadata", "to": "download", "label": "授权下载", "classification": "read", "variant": "security" }
+  ],
+  "cards": [
+    { "dot": "cyan", "title": "不要把路径当文件身份", "items": ["/tmp/report.pdf 只在某个 Sandbox 里有效", "Session 事件应保存稳定的 attachment_id / artifact_id", "前端用引用获取文件，而不是猜远程路径"] },
+    { "dot": "amber", "title": "输入和输出是两条路", "items": ["输入：浏览器 → 存储 → Sandbox", "输出：Sandbox → Artifact Store → 前端", "中间的 Session event 只记录事实和引用"] },
+    { "dot": "rose", "title": "清理要问三个问题", "items": ["Turn 结束是否还保留文件？", "Session 删除是否删除二进制？", "共享或 Fork 后，引用还能不能继续读取？"] }
+  ]
+}
