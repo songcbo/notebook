@@ -30,11 +30,11 @@ describe("typeguards", () => {
     assert(path.isRelativeURL("./abc/def?query=1#an-anchor"))
     assert(path.isRelativeURL("../abc/def"))
     assert(path.isRelativeURL("./abc/def.pdf"))
+    assert(path.isRelativeURL("./abc/def.html"))
 
     assert(!path.isRelativeURL("abc"))
     assert(!path.isRelativeURL("/abc/def"))
     assert(!path.isRelativeURL(""))
-    assert(!path.isRelativeURL("./abc/def.html"))
     assert(!path.isRelativeURL("./abc/def.md"))
   })
 
@@ -109,7 +109,7 @@ describe("transforms", () => {
     asserts(
       [
         ["content/index.md", "content/index"],
-        ["content/index.html", "content/index"],
+        ["content/index.html", "content/index.html"],
         ["content/_index.md", "content/index"],
         ["/content/index.md", "content/index"],
         ["content/cool.png", "content/cool.png"],
@@ -135,7 +135,7 @@ describe("transforms", () => {
         ["./", "./"],
         ["./index", "./"],
         ["./index#abc", "./#abc"],
-        ["./index.html", "./"],
+        ["./index.html", "./index.html"],
         ["./index.md", "./"],
         ["./index.css", "./index.css"],
         ["content", "./content"],
@@ -267,7 +267,7 @@ describe("link strategies", () => {
       )
       assert.strictEqual(
         path.transformLink(cur, "./diagrams/qm-architecture.html", opts),
-        "./diagrams/qm-architecture",
+        "./diagrams/qm-architecture.html",
       )
       assert.strictEqual(
         path.transformLink(cur, "../shared/architecture.svg", opts),
