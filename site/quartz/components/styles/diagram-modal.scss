@@ -1,0 +1,75 @@
+@use "../../styles/variables.scss" as *;
+
+.diagram-modal {
+  width: 96vw;
+  height: 92vh;
+  max-width: none;
+  max-height: none;
+  margin: auto;
+  padding: 0;
+  overflow: hidden;
+  color: var(--darkgray);
+  background: var(--light);
+  border: 1px solid var(--lightgray);
+  border-radius: 10px;
+  box-shadow: 0 1.5rem 5rem rgba(0, 0, 0, 0.35);
+
+  &::backdrop {
+    background: rgba(0, 0, 0, 0.72);
+    backdrop-filter: blur(2px);
+  }
+
+  &__bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 3rem;
+    padding: 0 0.75rem 0 1rem;
+    border-bottom: 1px solid var(--lightgray);
+    background: var(--light);
+  }
+
+  h2 {
+    margin: 0;
+    overflow: hidden;
+    font-size: 1rem;
+    font-weight: 600;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__close {
+    display: grid;
+    width: 2rem;
+    height: 2rem;
+    padding: 0;
+    place-items: center;
+    color: var(--darkgray);
+    background: transparent;
+    border: 0;
+    border-radius: 0.35rem;
+    font-size: 1.5rem;
+    line-height: 1;
+    cursor: pointer;
+
+    &:hover,
+    &:focus-visible {
+      background: var(--lightgray);
+    }
+  }
+
+  &__frame {
+    display: block;
+    width: 100%;
+    height: calc(100% - 3rem);
+    border: 0;
+    background: #fff;
+  }
+
+  @media all and ($mobile) {
+    width: 100vw;
+    height: 100dvh;
+    border: 0;
+    border-radius: 0;
+  }
+}
