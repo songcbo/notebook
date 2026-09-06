@@ -60,7 +60,7 @@
             <circle cx="4.1" cy="4.8" r=".7" class="sigil-fill"/>
             <circle cx="6.3" cy="4.8" r=".7" class="sigil-fill"/>
           </g>
-          <text data-detail-anchor x="100" y="149" class="t-primary" font-size="10" font-weight="600" text-anchor="middle">临时草稿</text>
+          <text data-detail-anchor="true" x="100" y="149" class="t-primary" font-size="10" font-weight="600" text-anchor="middle">临时草稿</text>
           <text data-detail="context" x="100" y="165" class="t-muted" font-size="7" text-anchor="middle">File / Blob URL</text>
         <text data-detail="fine" x="100" y="175" class="t-frontend" font-size="7" text-anchor="middle">not durable</text>
         </g>
@@ -72,7 +72,7 @@
           <g aria-hidden="true" data-semantic-sigil="backend" class="semantic-sigil s-backend" transform="translate(265 134) scale(0.6875)">
             <path d="M6 3 3 8l3 5M10 3l3 5-3 5"/>
           </g>
-          <text data-detail-anchor x="315" y="149" class="t-primary" font-size="10" font-weight="600" text-anchor="middle">上传准入</text>
+          <text data-detail-anchor="true" x="315" y="149" class="t-primary" font-size="10" font-weight="600" text-anchor="middle">上传准入</text>
           <text data-detail="context" x="315" y="165" class="t-muted" font-size="7" text-anchor="middle">大小 / 类型 / 权限</text>
         </g>
 
@@ -84,7 +84,7 @@
             <ellipse cx="8" cy="4" rx="5" ry="2"/>
             <path d="M3 4v8c0 1.1 2.2 2 5 2s5-.9 5-2V4M3 8c0 1.1 2.2 2 5 2s5-.9 5-2"/>
           </g>
-          <text data-detail-anchor x="315" y="377" class="t-primary" font-size="10" font-weight="600" text-anchor="middle">用户事件</text>
+          <text data-detail-anchor="true" x="315" y="377" class="t-primary" font-size="10" font-weight="600" text-anchor="middle">用户事件</text>
           <text data-detail="context" x="315" y="393" class="t-muted" font-size="7" text-anchor="middle">只保存稳定引用</text>
         <text data-detail="fine" x="315" y="403" class="t-database" font-size="7" text-anchor="middle">fact</text>
         </g>
@@ -96,7 +96,7 @@
           <g aria-hidden="true" data-semantic-sigil="cloud" class="semantic-sigil s-cloud" transform="translate(480 134) scale(0.6875)">
             <path d="M4.3 12.5h7.3a2.4 2.4 0 0 0 .2-4.8 4 4 0 0 0-7.5-1.3A3.1 3.1 0 0 0 4.3 12.5Z"/>
           </g>
-          <text data-detail-anchor x="530" y="149" class="t-primary" font-size="10" font-weight="600" text-anchor="middle">Sandbox 文件</text>
+          <text data-detail-anchor="true" x="530" y="149" class="t-primary" font-size="10" font-weight="600" text-anchor="middle">Sandbox 文件</text>
           <text data-detail="context" x="530" y="165" class="t-muted" font-size="7" text-anchor="middle">Agent 可读路径</text>
         </g>
 
@@ -110,7 +110,7 @@
             <circle cx="10.5" cy="8" r="1" class="sigil-fill"/>
             <circle cx="7" cy="11.5" r="1" class="sigil-fill"/>
           </g>
-          <text data-detail-anchor x="530" y="377" class="t-primary" font-size="10" font-weight="600" text-anchor="middle">产物输出</text>
+          <text data-detail-anchor="true" x="530" y="377" class="t-primary" font-size="10" font-weight="600" text-anchor="middle">产物输出</text>
           <text data-detail="context" x="530" y="393" class="t-muted" font-size="7" text-anchor="middle">文件 / 日志 / 图片</text>
         </g>
 
@@ -121,7 +121,7 @@
           <g aria-hidden="true" data-semantic-sigil="cloud" class="semantic-sigil s-cloud" transform="translate(695 134) scale(0.6875)">
             <path d="M4.3 12.5h7.3a2.4 2.4 0 0 0 .2-4.8 4 4 0 0 0-7.5-1.3A3.1 3.1 0 0 0 4.3 12.5Z"/>
           </g>
-          <text data-detail-anchor x="745" y="149" class="t-primary" font-size="10" font-weight="600" text-anchor="middle">Artifact Store</text>
+          <text data-detail-anchor="true" x="745" y="149" class="t-primary" font-size="10" font-weight="600" text-anchor="middle">Artifact Store</text>
           <text data-detail="context" x="745" y="165" class="t-muted" font-size="7" text-anchor="middle">不可变 ID / URL</text>
         <text data-detail="fine" x="745" y="175" class="t-cloud" font-size="7" text-anchor="middle">durable bytes</text>
         </g>
@@ -134,7 +134,7 @@
             <ellipse cx="8" cy="4" rx="5" ry="2"/>
             <path d="M3 4v8c0 1.1 2.2 2 5 2s5-.9 5-2V4M3 8c0 1.1 2.2 2 5 2s5-.9 5-2"/>
           </g>
-          <text data-detail-anchor x="745" y="377" class="t-primary" font-size="10" font-weight="600" text-anchor="middle">文件元数据</text>
+          <text data-detail-anchor="true" x="745" y="377" class="t-primary" font-size="10" font-weight="600" text-anchor="middle">文件元数据</text>
           <text data-detail="context" x="745" y="393" class="t-muted" font-size="7" text-anchor="middle">Session 关系 + 尺寸</text>
         </g>
 
@@ -148,7 +148,7 @@
             <circle cx="4.1" cy="4.8" r=".7" class="sigil-fill"/>
             <circle cx="6.3" cy="4.8" r=".7" class="sigil-fill"/>
           </g>
-          <text data-detail-anchor x="960" y="149" class="t-primary" font-size="10" font-weight="600" text-anchor="middle">预览卡片</text>
+          <text data-detail-anchor="true" x="960" y="149" class="t-primary" font-size="10" font-weight="600" text-anchor="middle">预览卡片</text>
           <text data-detail="context" x="960" y="165" class="t-muted" font-size="7" text-anchor="middle">名称 / 类型 / 大小</text>
         </g>
 
@@ -162,7 +162,7 @@
             <circle cx="4.1" cy="4.8" r=".7" class="sigil-fill"/>
             <circle cx="6.3" cy="4.8" r=".7" class="sigil-fill"/>
           </g>
-          <text data-detail-anchor x="960" y="377" class="t-primary" font-size="10" font-weight="600" text-anchor="middle">下载 / 分享</text>
+          <text data-detail-anchor="true" x="960" y="377" class="t-primary" font-size="10" font-weight="600" text-anchor="middle">下载 / 分享</text>
           <text data-detail="context" x="960" y="393" class="t-muted" font-size="7" text-anchor="middle">授权后取文件</text>
         </g>
 
@@ -209,7 +209,7 @@
         </g>
 
         <!-- Legend -->
-        <g data-legend data-legend-bridge>
+        <g data-legend="true" data-legend-bridge="true">
           <text x="40" y="764" class="t-primary" font-size="10" font-weight="600">Legend</text>
           <g data-legend-semantic-kind="emphasis" data-legend-x="40" data-legend-baseline="784" data-legend-width="103">
             <path d="M 40 781 L 74 781" class="a-emphasis" stroke-width="1.8" marker-end="url(#arrowhead-emphasis)"/>

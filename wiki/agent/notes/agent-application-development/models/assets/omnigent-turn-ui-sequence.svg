@@ -175,7 +175,7 @@
             <rect x="2.5" y="5" width="8.5" height="8" rx="1.5"/>
             <path d="M8 2.5h5.5V8M13.5 2.5 7.5 8.5"/>
           </g>
-          <text data-detail-anchor x="62" y="94" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">User</text>
+          <text data-detail-anchor="true" x="62" y="94" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">User</text>
           <text data-detail="context" x="62" y="111" class="t-muted" font-size="7" text-anchor="middle">浏览器用户</text>
         </g>
 
@@ -189,7 +189,7 @@
             <circle cx="4.1" cy="4.8" r=".7" class="sigil-fill"/>
             <circle cx="6.3" cy="4.8" r=".7" class="sigil-fill"/>
           </g>
-          <text data-detail-anchor x="170" y="94" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">Web</text>
+          <text data-detail-anchor="true" x="170" y="94" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">Web</text>
           <text data-detail="context" x="170" y="111" class="t-muted" font-size="7" text-anchor="middle">Zustand chatStore</text>
         </g>
 
@@ -200,7 +200,7 @@
           <g aria-hidden="true" data-semantic-sigil="backend" class="semantic-sigil s-backend" transform="translate(241 78) scale(0.6875)">
             <path d="M6 3 3 8l3 5M10 3l3 5-3 5"/>
           </g>
-          <text data-detail-anchor x="278" y="94" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">Server</text>
+          <text data-detail-anchor="true" x="278" y="94" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">Server</text>
           <text data-detail="context" x="278" y="111" class="t-muted" font-size="7" text-anchor="middle">FastAPI 控制面</text>
         </g>
 
@@ -212,7 +212,7 @@
             <ellipse cx="8" cy="4" rx="5" ry="2"/>
             <path d="M3 4v8c0 1.1 2.2 2 5 2s5-.9 5-2V4M3 8c0 1.1 2.2 2 5 2s5-.9 5-2"/>
           </g>
-          <text data-detail-anchor x="386" y="94" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">Conversation</text>
+          <text data-detail-anchor="true" x="386" y="94" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">Conversation</text>
           <text data-detail="context" x="386" y="111" class="t-muted" font-size="7" text-anchor="middle">items + status</text>
         </g>
 
@@ -223,7 +223,7 @@
           <g aria-hidden="true" data-semantic-sigil="backend" class="semantic-sigil s-backend" transform="translate(457 78) scale(0.6875)">
             <path d="M6 3 3 8l3 5M10 3l3 5-3 5"/>
           </g>
-          <text data-detail-anchor x="494" y="94" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">Host</text>
+          <text data-detail-anchor="true" x="494" y="94" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">Host</text>
           <text data-detail="context" x="494" y="111" class="t-muted" font-size="7" text-anchor="middle">WebSocket 隧道</text>
         </g>
 
@@ -234,7 +234,7 @@
           <g aria-hidden="true" data-semantic-sigil="backend" class="semantic-sigil s-backend" transform="translate(565 78) scale(0.6875)">
             <path d="M6 3 3 8l3 5M10 3l3 5-3 5"/>
           </g>
-          <text data-detail-anchor x="602" y="94" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">Runner</text>
+          <text data-detail-anchor="true" x="602" y="94" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">Runner</text>
           <text data-detail="context" x="602" y="111" class="t-muted" font-size="7" text-anchor="middle">路由 + 资源</text>
         </g>
 
@@ -245,7 +245,7 @@
           <g aria-hidden="true" data-semantic-sigil="cloud" class="semantic-sigil s-cloud" transform="translate(673 78) scale(0.6875)">
             <path d="M4.3 12.5h7.3a2.4 2.4 0 0 0 .2-4.8 4 4 0 0 0-7.5-1.3A3.1 3.1 0 0 0 4.3 12.5Z"/>
           </g>
-          <text data-detail-anchor x="710" y="94" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">Harness</text>
+          <text data-detail-anchor="true" x="710" y="94" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">Harness</text>
           <text data-detail="context" x="710" y="111" class="t-muted" font-size="7" text-anchor="middle">CLI / SDK / Native</text>
         </g>
 
@@ -259,12 +259,12 @@
             <circle cx="10.5" cy="8" r="1" class="sigil-fill"/>
             <circle cx="7" cy="11.5" r="1" class="sigil-fill"/>
           </g>
-          <text data-detail-anchor x="818" y="94" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">SessionStream</text>
+          <text data-detail-anchor="true" x="818" y="94" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">SessionStream</text>
           <text data-detail="context" x="818" y="111" class="t-muted" font-size="6.5" text-anchor="middle">snapshot + live tail</text>
         </g>
 
         <!-- Legend -->
-        <g data-legend>
+        <g data-legend="true">
           <text x="40" y="1086" class="t-primary" font-size="10" font-weight="600">Legend</text>
           <g data-legend-semantic-kind="emphasis" data-legend-x="40" data-legend-baseline="1106" data-legend-width="78">
             <path d="M 40 1103 L 74 1103" class="a-emphasis" stroke-width="1.8" marker-end="url(#arrowhead-emphasis)"/>

@@ -69,7 +69,7 @@
             <ellipse cx="8" cy="4" rx="5" ry="2"/>
             <path d="M3 4v8c0 1.1 2.2 2 5 2s5-.9 5-2V4M3 8c0 1.1 2.2 2 5 2s5-.9 5-2"/>
           </g>
-          <text data-detail-anchor x="88" y="106" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">已排程</text>
+          <text data-detail-anchor="true" x="88" y="106" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">已排程</text>
           <text data-detail="context" x="88" y="123" class="t-muted" font-size="7.3" text-anchor="middle">cron / RRULE + 时区</text>
         <text data-detail="fine" x="88" y="141" class="t-database" font-size="7" text-anchor="middle">durable</text>
         </g>
@@ -81,7 +81,7 @@
           <g aria-hidden="true" data-semantic-sigil="backend" class="semantic-sigil s-backend" transform="translate(180 99) scale(0.6875)">
             <path d="M6 3 3 8l3 5M10 3l3 5-3 5"/>
           </g>
-          <text data-detail-anchor x="220" y="114" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">到点</text>
+          <text data-detail-anchor="true" x="220" y="114" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">到点</text>
           <text data-detail="context" x="220" y="131" class="t-muted" font-size="8" text-anchor="middle">时钟叫醒任务</text>
         </g>
 
@@ -93,7 +93,7 @@
             <path d="M8 2.2 13 4v3.5c0 3.1-1.8 5.4-5 6.5-3.2-1.1-5-3.4-5-6.5V4Z"/>
             <path d="m5.8 8 1.5 1.5 3-3"/>
           </g>
-          <text data-detail-anchor x="300" y="230" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">重新校验</text>
+          <text data-detail-anchor="true" x="300" y="230" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">重新校验</text>
           <text data-detail="context" x="300" y="247" class="t-muted" font-size="6" text-anchor="middle">权限 / Host / Workspace</text>
         <text data-detail="fine" x="300" y="265" class="t-security" font-size="7" text-anchor="middle">gate</text>
         </g>
@@ -108,7 +108,7 @@
             <circle cx="10.5" cy="8" r="1" class="sigil-fill"/>
             <circle cx="7" cy="11.5" r="1" class="sigil-fill"/>
           </g>
-          <text data-detail-anchor x="430" y="114" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">已入队</text>
+          <text data-detail-anchor="true" x="430" y="114" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">已入队</text>
           <text data-detail="context" x="430" y="131" class="t-muted" font-size="7.7" text-anchor="middle">Run / Conversation</text>
         </g>
 
@@ -119,7 +119,7 @@
           <g aria-hidden="true" data-semantic-sigil="backend" class="semantic-sigil s-backend" transform="translate(460 347) scale(0.6875)">
             <path d="M6 3 3 8l3 5M10 3l3 5-3 5"/>
           </g>
-          <text data-detail-anchor x="500" y="362" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">执行中</text>
+          <text data-detail-anchor="true" x="500" y="362" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">执行中</text>
           <text data-detail="context" x="500" y="379" class="t-muted" font-size="8" text-anchor="middle">普通 Agent Turn</text>
         </g>
 
@@ -131,7 +131,7 @@
             <ellipse cx="8" cy="4" rx="5" ry="2"/>
             <path d="M3 4v8c0 1.1 2.2 2 5 2s5-.9 5-2V4M3 8c0 1.1 2.2 2 5 2s5-.9 5-2"/>
           </g>
-          <text data-detail-anchor x="625" y="478" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">结果记录</text>
+          <text data-detail-anchor="true" x="625" y="478" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">结果记录</text>
           <text data-detail="context" x="625" y="495" class="t-muted" font-size="7.7" text-anchor="middle">成功 / 失败 / 跳过</text>
         <text data-detail="fine" x="625" y="513" class="t-database" font-size="7" text-anchor="middle">history</text>
         </g>
@@ -153,7 +153,7 @@
         </g>
 
         <!-- Legend -->
-        <g data-legend data-legend-bridge>
+        <g data-legend="true" data-legend-bridge="true">
           <text x="20" y="552" class="t-primary" font-size="10" font-weight="600">Legend</text>
           <g data-legend-semantic-kind="backend" data-legend-kind="backend" data-legend-label="Agent logic" data-legend-x="20" data-legend-baseline="572" data-legend-width="90">
             <rect x="20" y="564" width="14" height="9" rx="2" class="c-backend" stroke-width="1"/>
