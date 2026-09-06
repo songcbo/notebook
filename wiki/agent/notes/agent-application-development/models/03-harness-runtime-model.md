@@ -15,7 +15,7 @@ updated_at: 2026-09-02
 
 这一层把应用层的 Turn 转换成模型—工具循环。稳定边界通常至少包含：输入上下文、模型/能力选择、取消与 steering、统一事件、终态结果，以及可选的 compact / resume。
 
-![Harness 与 Agent Runtime 的一次执行](assets/module-harness-runtime-execution.png)
+![Harness 与 Agent Runtime 的一次执行](./assets/module-harness-runtime-execution.png)
 
 附件：[SVG 矢量图](../diagrams/module-harness-runtime-execution.svg) · [HTML 交互图](../diagrams/module-harness-runtime-execution.html)
 

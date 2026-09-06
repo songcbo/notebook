@@ -16,7 +16,7 @@ updated_at: 2026-09-02
 
 工具模块不只是函数注册。完整路径至少包括发现、Schema、参数校验、Policy、Approval、执行位置、结果规范化、事件提交和恢复去重。
 
-![Context 构造与工具治理链路](assets/module-context-tool-governance.png)
+![Context 构造与工具治理链路](./assets/module-context-tool-governance.png)
 
 附件：[SVG 矢量图](../diagrams/module-context-tool-governance.svg) · [HTML 交互图](../diagrams/module-context-tool-governance.html)
 

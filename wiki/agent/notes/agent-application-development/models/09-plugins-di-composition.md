@@ -15,7 +15,7 @@ updated_at: 2026-09-02
 
 模块组合要回答：配置从哪里来、实现如何选择、实例属于哪个作用域、资源由谁释放。普通构造函数、Registry、entry point 和 Plugin Context 只是动态程度不同的手段。
 
-![四个项目的模块组合方式](assets/module-composition-models.png)
+![四个项目的模块组合方式](./assets/module-composition-models.png)
 
 附件：[SVG 矢量图](../diagrams/module-composition-models.svg) · [HTML 交互图](../diagrams/module-composition-models.html)
 

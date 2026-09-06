@@ -15,7 +15,7 @@ updated_at: 2026-09-02
 
 Session 是跨多轮存在的业务上下文，Turn 是一次用户驱动的执行，Step 是 Turn 内一次模型或工具推进；Worker、Runner、进程、容器和 Agent 实例只是执行载体。它们必须有不同的标识、终止条件和恢复规则。
 
-![Session、Turn 与执行载体生命周期](assets/module-session-turn-lifecycle.png)
+![Session、Turn 与执行载体生命周期](./assets/module-session-turn-lifecycle.png)
 
 附件：[SVG 矢量图](../diagrams/module-session-turn-lifecycle.svg) · [HTML 交互图](../diagrams/module-session-turn-lifecycle.html)
 
@@ -143,7 +143,7 @@ AgentBase 会保存 current tool batch、approval batch、trace context 和 runt
 
 ### 9.1 QM：入口先产生 Run，再由 Worker 持有执行权
 
-![QM Turn 与前端联动](assets/qm-turn-ui-sequence.svg)
+![QM Turn 与前端联动](./assets/qm-turn-ui-sequence.svg)
 
 附件：[SVG 矢量图](../diagrams/qm-turn-ui-sequence.svg) · [HTML 交互图](../diagrams/qm-turn-ui-sequence.html)
 
@@ -151,7 +151,7 @@ QM 的关键顺序是：Surface 调用 Core → 创建带幂等键的 Run → Wo
 
 ### 9.2 Omnigent：Conversation 事实不等于 Harness 进程
 
-![Omnigent Turn 与前端联动](assets/omnigent-turn-ui-sequence.svg)
+![Omnigent Turn 与前端联动](./assets/omnigent-turn-ui-sequence.svg)
 
 附件：[SVG 矢量图](../diagrams/omnigent-turn-ui-sequence.svg) · [HTML 交互图](../diagrams/omnigent-turn-ui-sequence.html)
 
@@ -159,7 +159,7 @@ Omnigent 的 Server 接收输入并记录 Conversation item，随后把执行路
 
 ### 9.3 DSH：Turn 是事件协议中的一段生命周期
 
-![DeepSeek Harness Turn 与前端联动](assets/dsh-turn-ui-sequence.svg)
+![DeepSeek Harness Turn 与前端联动](./assets/dsh-turn-ui-sequence.svg)
 
 附件：[SVG 矢量图](../diagrams/dsh-turn-ui-sequence.svg) · [HTML 交互图](../diagrams/dsh-turn-ui-sequence.html)
 
@@ -167,7 +167,7 @@ DSH 先 append `turn/start`，之后每个 step、assistant chunk、tool call/re
 
 ### 9.4 AI Manus：Task/Flow 让一个 Session 可以继续多个执行阶段
 
-![AI Manus Turn 与前端联动](assets/ai-manus-turn-ui-sequence.svg)
+![AI Manus Turn 与前端联动](./assets/ai-manus-turn-ui-sequence.svg)
 
 附件：[SVG 矢量图](../diagrams/ai-manus-turn-ui-sequence.svg) · [HTML 交互图](../diagrams/ai-manus-turn-ui-sequence.html)
 
@@ -175,7 +175,7 @@ AI Manus 由 TaskOrchestrationService 决定是复用现有 Task、恢复中断 
 
 ## 10. 定时任务：时间到了，不是“把旧 Turn 硬拽回来”
 
-![定时任务从规则到一次执行](assets/scheduler-workflow.svg)
+![定时任务从规则到一次执行](./assets/scheduler-workflow.svg)
 
 附件：[SVG 矢量图](../diagrams/scheduler-workflow.svg) · [HTML 交互图](../diagrams/scheduler-workflow.html)
 

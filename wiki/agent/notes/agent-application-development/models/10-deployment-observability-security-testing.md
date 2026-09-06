@@ -16,7 +16,7 @@ updated_at: 2026-09-02
 
 部署证明组件边界能落地；可观测性证明一次 Turn 能跨边界追踪；安全证明副作用受到真实控制；测试证明 Provider 可替换、事件可恢复。
 
-![Agent 应用部署、治理与验证平面](assets/module-deployment-observability.png)
+![Agent 应用部署、治理与验证平面](./assets/module-deployment-observability.png)
 
 附件：[SVG 矢量图](../diagrams/module-deployment-observability.svg) · [HTML 交互图](../diagrams/module-deployment-observability.html)
 

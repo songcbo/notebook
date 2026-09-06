@@ -14,7 +14,7 @@ updated_at: 2026-09-02
 
 多人共享一个 Agent 应用、父 Agent 委派 child Agent、多个自治 Agent 通过 Mailbox 协作，是三个不同问题。
 
-![四项目的多 Agent 与协作模式](assets/module-multi-agent-patterns.png)
+![四项目的多 Agent 与协作模式](./assets/module-multi-agent-patterns.png)
 
 附件：[SVG 矢量图](../diagrams/module-multi-agent-patterns.svg) · [HTML 交互图](../diagrams/module-multi-agent-patterns.html)
 

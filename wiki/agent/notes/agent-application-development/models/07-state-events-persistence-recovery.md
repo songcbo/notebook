@@ -16,7 +16,7 @@ updated_at: 2026-09-02
 
 Agent 应用同时有业务事实、执行协调、实时增量、二进制产物和进程内临时状态。它们可以使用不同技术，但同一个对象只能有一个冲突裁决者。
 
-![Agent 应用的状态平面与执行平面](assets/module-state-execution-planes.png)
+![Agent 应用的状态平面与执行平面](./assets/module-state-execution-planes.png)
 
 附件：[SVG 矢量图](../diagrams/module-state-execution-planes.svg) · [HTML 交互图](../diagrams/module-state-execution-planes.html)
 
@@ -145,7 +145,7 @@ RuntimeAgentRepository 保存 Agent records，RuntimeCheckpointService 保存 ch
 
 ## 10. 真正难的是“两个动作之间”的小缝隙
 
-![可恢复 Turn 的事实、交付与重连](assets/turn-ui-state-sequence.svg)
+![可恢复 Turn 的事实、交付与重连](./assets/turn-ui-state-sequence.svg)
 
 附件：[SVG 矢量图](../diagrams/turn-ui-state-sequence.svg) · [HTML 交互图](../diagrams/turn-ui-state-sequence.html)
 

@@ -19,7 +19,7 @@ updated_at: 2026-09-02
 - **Memory**：可以跨 Turn 或跨 Session 召回的状态。
 - **Skill**：可发现、按需读取的程序化知识和资源。
 
-![上下文、Prompt、Memory 与 Skill 的组装](assets/module-context-assembly.png)
+![上下文、Prompt、Memory 与 Skill 的组装](./assets/module-context-assembly.png)
 
 附件：[SVG 矢量图](../diagrams/module-context-assembly.svg) · [HTML 交互图](../diagrams/module-context-assembly.html)
 
@@ -157,7 +157,7 @@ Skill 不是一段神奇的 Prompt，更像一本放在书架上的说明书。�
 1. Skill 原文件存在哪里：代码仓库、数据库、对象存储、用户目录，还是 Runner 的缓存目录？
 2. 当前执行环境能不能读到它：需要复制到 Sandbox，还是通过一个受控工具读取？
 
-![Skill 从发现到运行时可读文件](assets/skill-materialization.svg)
+![Skill 从发现到运行时可读文件](./assets/skill-materialization.svg)
 
 附件：[SVG 矢量图](../diagrams/skill-materialization.svg) · [HTML 交互图](../diagrams/skill-materialization.html)
 

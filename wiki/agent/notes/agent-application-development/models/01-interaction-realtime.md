@@ -19,7 +19,7 @@ updated_at: 2026-09-02
 - **事实路径**：消息、工具调用、审批和终态怎样持久化。
 - **实时路径**：token、状态变化和日志怎样低延迟推送。
 
-![Agent 应用请求与 Turn 主链路](assets/module-request-turn-flow.png)
+![Agent 应用请求与 Turn 主链路](./assets/module-request-turn-flow.png)
 
 附件：[SVG 矢量图](../diagrams/module-request-turn-flow.svg) · [HTML 交互图](../diagrams/module-request-turn-flow.html)
 
@@ -185,7 +185,7 @@ LLM delta
 
 可以把前端想成一个“看比赛的记分牌”：它不能自己猜比赛是否结束，只能根据后端发来的**快照、事件和游标**更新画面。一个可靠的链路通常是：先拿当前快照，再从快照的游标之后接收增量；重连时再次从游标追赶。`loading` 只是浏览器正在等，不是后端真正的 Turn 状态。
 
-![Turn、事件与前端状态联动](assets/turn-ui-state-sequence.svg)
+![Turn、事件与前端状态联动](./assets/turn-ui-state-sequence.svg)
 
 附件：[SVG 矢量图](../diagrams/turn-ui-state-sequence.svg) · [HTML 交互图](../diagrams/turn-ui-state-sequence.html)
 

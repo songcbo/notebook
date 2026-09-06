@@ -17,7 +17,7 @@ updated_at: 2026-09-02
 - **Workspace**：当前 Agent 可读写、可连续工作的目录视图。
 - **Artifact**：离开 Sandbox 后仍能通过稳定 ID 引用、下载或分享的产物。
 
-![Sandbox、Workspace 与 Artifact 的执行链](assets/module-sandbox-artifact-flow.png)
+![Sandbox、Workspace 与 Artifact 的执行链](./assets/module-sandbox-artifact-flow.png)
 
 附件：[SVG 矢量图](../diagrams/module-sandbox-artifact-flow.svg) · [HTML 交互图](../diagrams/module-sandbox-artifact-flow.html)
 
@@ -138,7 +138,7 @@ DockerSandbox 的方法直接对应远端 service API：start_bash_task、read_b
 
 ## 9. 附件和 Artifact：文件要经过一座“桥”才能离开 Sandbox
 
-![上传附件、Sandbox 工作区与最终 Artifact](assets/attachment-artifact-flow.svg)
+![上传附件、Sandbox 工作区与最终 Artifact](./assets/attachment-artifact-flow.svg)
 
 附件：[SVG 矢量图](../diagrams/attachment-artifact-flow.svg) · [HTML 交互图](../diagrams/attachment-artifact-flow.html)
 
